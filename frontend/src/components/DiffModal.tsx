@@ -73,10 +73,10 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
   // Compute Diffs with memoization using diff-match-patch
   const diffs = useMemo(() => {
     const dmp = new diff_match_patch();
-    const d = dmp.diff_main(currentData.original_content || '', editedContent);
+    const d = dmp.diff_main(currentData?.original_content || '', editedContent || '');
     dmp.diff_cleanupSemantic(d);
     return d;
-  }, [currentData.original_content, editedContent]);
+  }, [currentData?.original_content, editedContent]);
 
   // Generate JSX for Left Column (Original content with highlighted deletes)
   const renderOriginalDiff = () => {
