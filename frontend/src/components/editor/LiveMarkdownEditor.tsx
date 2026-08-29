@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Save, Check, ListTree, Wand2, ArrowLeft, Tag, Eye, Edit3 } from 'lucide-react';
+import { Save, Check, ListTree, Wand2, ArrowLeft, Eye, Edit3 } from 'lucide-react';
 import { marked } from 'marked';
 import { useNotesStore } from '../../stores/notesStore';
 import { useModalStore } from '../../stores/modalStore';
@@ -48,8 +48,6 @@ export default function LiveMarkdownEditor({
   const [initialTags, setInitialTags] = useState<string[]>(() =>
     isNew ? [] : Array.isArray(initialNote?.tags) ? initialNote.tags : []
   );
-  const [newTagInput, setNewTagInput] = useState('');
-  const [isAddingTag, setIsAddingTag] = useState(false);
   const [isPreview, setIsPreview] = useState<boolean>(() => !isNew);
 
   const [saving, setSaving] = useState(false);
@@ -268,7 +266,7 @@ export default function LiveMarkdownEditor({
       const data = await res.json();
       setIsAiDrawerOpen(false);
       setAiError('');
-      openDiff({ ...data, original_content: content });
+      openDiff(data);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       setAiError(msg);
@@ -340,11 +338,6 @@ export default function LiveMarkdownEditor({
             size="md"
             shape="rounded-full"
             variant={isPreview ? 'blue' : 'default'}
-            className={
-              isPreview
-                ? 'bg-blue-500/20 text-blue-500 dark:text-blue-400 border-blue-500/40 hover:bg-blue-500/30'
-                : 'bg-blue-500/10 text-blue-500 dark:text-blue-400 border-blue-500/30 hover:bg-blue-500/20'
-            }
             onClick={togglePreview}
           />
 
@@ -358,13 +351,6 @@ export default function LiveMarkdownEditor({
                 size="md"
                 shape="rounded-full"
                 variant={savedSuccess ? 'emerald' : canSave ? 'amber' : 'default'}
-                className={
-                  savedSuccess
-                    ? 'bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 border-emerald-500/40 hover:bg-emerald-500/30'
-                    : canSave
-                    ? 'bg-amber-500/20 text-amber-500 dark:text-amber-400 border-amber-500/40 hover:bg-amber-500/30'
-                    : 'opacity-40 text-zinc-500 border-zinc-800'
-                }
                 onClick={handleSave}
               />
               {isDirty && (
@@ -379,11 +365,7 @@ export default function LiveMarkdownEditor({
               icon={ListTree}
               size="md"
               shape="rounded-full"
-              className={
-                isOutlineOpen
-                  ? 'bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 border-emerald-500/40'
-                  : 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
-              }
+              variant={isOutlineOpen ? 'emerald' : 'default'}
               onClick={() => setIsOutlineOpen((prev) => !prev)}
             />
           )}
@@ -393,11 +375,7 @@ export default function LiveMarkdownEditor({
             icon={Wand2}
             size="md"
             shape="rounded-full"
-            className={
-              isAiDrawerOpen
-                ? 'bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 border-emerald-500/40'
-                : 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
-            }
+            variant={isAiDrawerOpen ? 'emerald' : 'default'}
             onClick={() => setIsAiDrawerOpen((prev) => !prev)}
           />
         </div>
@@ -448,47 +426,12 @@ export default function LiveMarkdownEditor({
                   onTagRemove={(tagToRemove) => {
                     setTags(tags.filter((t) => t !== tagToRemove));
                   }}
+                  onTagAdd={(newTag) => {
+                    if (!tags.includes(newTag)) {
+                      setTags([...tags, newTag]);
+                    }
+                  }}
                 />
-
-                {isAddingTag ? (
-                  <div className="flex items-center gap-1 shrink-0">
-                    <input
-                      type="text"
-                      value={newTagInput}
-                      onChange={(e) => setNewTagInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          const trimmed = newTagInput.trim().replace(/^#/, '');
-                          if (trimmed && !tags.includes(trimmed)) setTags([...tags, trimmed]);
-                          setNewTagInput('');
-                          setIsAddingTag(false);
-                        } else if (e.key === 'Escape') {
-                          setIsAddingTag(false);
-                        }
-                      }}
-                      onBlur={() => {
-                        const trimmed = newTagInput.trim().replace(/^#/, '');
-                        if (trimmed && !tags.includes(trimmed)) setTags([...tags, trimmed]);
-                        setNewTagInput('');
-                        setIsAddingTag(false);
-                      }}
-                      placeholder={t('common.addTag')}
-                      autoFocus
-                      className="bg-zinc-900 border border-emerald-500/50 rounded-full px-2.5 py-0.5 text-xs text-emerald-400 placeholder-zinc-500 focus:outline-none w-24"
-                    />
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setIsAddingTag(true)}
-                    className="h-5 px-2 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 hover:border-emerald-500/50 text-emerald-400 text-[11px] leading-none flex items-center gap-1 transition-all cursor-pointer select-none active:scale-95 shrink-0"
-                    aria-label={t('common.addTag')}
-                  >
-                    <Tag className="w-2.5 h-2.5 text-emerald-400" />
-                    <span>{t('common.addTag')}</span>
-                  </button>
-                )}
               </div>
 
               {/* Core Markdown Live Textarea (Adapting auto height) */}

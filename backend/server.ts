@@ -638,7 +638,7 @@ server.post(
     }
 
     // 4. AI Process (Intelligent Capture & Modification Engine)
-    const targetFilepath = request.body?.filepath ? getSafeRelativePath(request.body.filepath) : '';
+    const targetFilepath = getSafeRelativePath(request.body?.filepath || '');
 
     // Search Similar Notes (hybrid retrieval with content or memo, skip if modifying a specific note)
     const similarNotes: Array<{ filepath: string; similarity: number; content: string }> = [];

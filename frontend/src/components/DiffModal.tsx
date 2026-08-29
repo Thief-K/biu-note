@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, type FormEvent } from 'react';
 import diff_match_patch from 'diff-match-patch';
-import { Sparkles, Check, X, RotateCw, Tag, Plus, Eye, History, FileText } from 'lucide-react';
+import { Sparkles, Check, X, RotateCw, Tag, Eye, History, FileText } from 'lucide-react';
 import { useI18n } from '../i18n';
 import { apiFetch } from '../utils/api';
 import AlertBanner from './common/AlertBanner';
@@ -20,13 +20,13 @@ export interface DiffModalProps {
   onConfirm: (payload: DiffModalCommitPayload) => void;
 }
 
+const dmp = new diff_match_patch();
+
 export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps) {
   const { t } = useI18n();
   const [editedTitle, setEditedTitle] = useState(data.proposed_title || '');
   const [editedContent, setEditedContent] = useState(data.diff_content || '');
   const [tags, setTags] = useState<string[]>(() => data.proposed_tags || []);
-  const [newTagInput, setNewTagInput] = useState('');
-  const [isAddingTag, setIsAddingTag] = useState(false);
 
   // Mobile segmented view tab ('proposed' vs 'original')
   const [mobileTab, setMobileTab] = useState<'proposed' | 'original'>('proposed');
@@ -70,40 +70,27 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
     targetEl.scrollLeft = sourceEl.scrollLeft;
   };
 
-  // Compute Diffs with memoization using diff-match-patch
+  // Compute Diffs with memoization using module-level diff-match-patch
   const diffs = useMemo(() => {
-    const dmp = new diff_match_patch();
     const d = dmp.diff_main(currentData?.original_content || '', editedContent || '');
     dmp.diff_cleanupSemantic(d);
     return d;
   }, [currentData?.original_content, editedContent]);
 
-  // Generate JSX for Left Column (Original content with highlighted deletes)
-  const renderOriginalDiff = () => {
-    return diffs.map((diff, index) => {
-      const [type, text] = diff;
+  // Unified JSX Diff Renderer for Original and Proposed Panes
+  const renderDiffPane = (isProposed: boolean) => {
+    return diffs.map(([type, text], index) => {
       if (type === 0) {
-        return <span key={index} className="text-zinc-400">{text}</span>;
+        return <span key={index} className={isProposed ? 'text-zinc-200' : 'text-zinc-400'}>{text}</span>;
       }
-      if (type === -1) {
+      if (!isProposed && type === -1) {
         return (
           <span key={index} className="bg-red-500/20 text-red-300 line-through px-0.5 border border-red-500/30 rounded">
             {text}
           </span>
         );
       }
-      return null;
-    });
-  };
-
-  // Generate JSX for Right Column (Proposed content with highlighted inserts)
-  const renderProposedDiff = () => {
-    return diffs.map((diff, index) => {
-      const [type, text] = diff;
-      if (type === 0) {
-        return <span key={index} className="text-zinc-200">{text}</span>;
-      }
-      if (type === 1) {
+      if (isProposed && type === 1) {
         return (
           <span key={index} className="bg-emerald-500/25 text-emerald-300 px-0.5 border border-emerald-500/30 rounded font-medium">
             {text}
@@ -158,13 +145,10 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
     }
   };
 
-  const handleAddTag = () => {
-    const trimmed = newTagInput.trim().replace(/^#/, '');
-    if (trimmed && !tags.includes(trimmed)) {
-      setTags([...tags, trimmed]);
+  const handleAddTag = (newTag: string) => {
+    if (!tags.includes(newTag)) {
+      setTags([...tags, newTag]);
     }
-    setNewTagInput('');
-    setIsAddingTag(false);
   };
 
   const handleSave = () => {
@@ -184,42 +168,47 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
     <div className="fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4 select-none animate-fade">
       <div className="w-full max-w-6xl h-[92vh] bg-zinc-900 border border-zinc-750 rounded-2xl flex flex-col overflow-hidden animate-slide-up shadow-2xl">
         {/* 1. Modal Header Banner */}
-        <div
-          className={`px-4 sm:px-6 py-3.5 flex items-center justify-between shrink-0 select-none ${
-            currentData.action === 'merge'
-              ? 'bg-blue-500/10 border-b border-blue-500/20'
-              : 'bg-emerald-500/10 border-b border-emerald-500/20'
-          }`}
-        >
-          <div className="flex items-center gap-3">
+        {(() => {
+          const isMerge = currentData?.action === 'merge';
+          return (
             <div
-              className={`w-8 h-8 rounded-xl flex items-center justify-center border shrink-0 ${
-                currentData.action === 'merge'
-                  ? 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-                  : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+              className={`px-4 sm:px-6 py-3.5 flex items-center justify-between shrink-0 select-none ${
+                isMerge
+                  ? 'bg-blue-500/10 border-b border-blue-500/20'
+                  : 'bg-emerald-500/10 border-b border-emerald-500/20'
               }`}
             >
-              <Sparkles className="w-4 h-4 animate-pulse" />
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center border shrink-0 ${
+                    isMerge
+                      ? 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+                      : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                  }`}
+                >
+                  <Sparkles className="w-4 h-4 animate-pulse" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-zinc-100 text-sm flex items-center gap-1.5">
+                    <span>{isMerge ? t('diff.mergeTitle') : t('diff.newTitle')}</span>
+                  </h3>
+                  <p className="text-[11px] text-zinc-400 font-mono truncate max-w-xs sm:max-w-md">
+                    {isMerge
+                      ? t('diff.targetFile', { file: currentData.target_file || '' })
+                      : t('diff.createFlat')}
+                  </p>
+                </div>
+              </div>
+              <IconButton
+                icon={X}
+                size="sm"
+                variant="ghost"
+                shape="rounded-lg"
+                onClick={onCancel}
+              />
             </div>
-            <div>
-              <h3 className="font-bold text-zinc-100 text-sm flex items-center gap-1.5">
-                <span>{currentData.action === 'merge' ? t('diff.mergeTitle') : t('diff.newTitle')}</span>
-              </h3>
-              <p className="text-[11px] text-zinc-400 font-mono truncate max-w-xs sm:max-w-md">
-                {currentData.action === 'merge'
-                  ? t('diff.targetFile', { file: currentData.target_file || '' })
-                  : t('diff.createFlat')}
-              </p>
-            </div>
-          </div>
-          <IconButton
-            icon={X}
-            size="sm"
-            variant="ghost"
-            shape="rounded-lg"
-            onClick={onCancel}
-          />
-        </div>
+          );
+        })()}
 
         {/* 2. Note Title & Tag Capsule Management */}
         <div className="px-4 sm:px-6 py-3 border-b border-zinc-800 bg-zinc-950/50 grid grid-cols-1 md:grid-cols-2 gap-3 shrink-0">
@@ -247,38 +236,8 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
               tags={tags}
               size="sm"
               onTagRemove={(tagToRemove) => setTags(tags.filter((t) => t !== tagToRemove))}
+              onTagAdd={handleAddTag}
             />
-
-            {isAddingTag ? (
-              <div className="flex items-center gap-1 shrink-0">
-                <input
-                  type="text"
-                  value={newTagInput}
-                  onChange={(e) => setNewTagInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleAddTag();
-                    } else if (e.key === 'Escape') {
-                      setIsAddingTag(false);
-                    }
-                  }}
-                  onBlur={handleAddTag}
-                  placeholder={t('common.addTag')}
-                  autoFocus
-                  className="bg-zinc-900 border border-emerald-500/50 rounded-full px-2.5 py-0.5 text-xs text-emerald-400 placeholder-zinc-500 focus:outline-none w-20"
-                />
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setIsAddingTag(true)}
-                className="h-5 px-2 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 hover:border-emerald-500/50 text-emerald-400 text-[11px] leading-none flex items-center gap-1 transition-all cursor-pointer select-none active:scale-95 shrink-0"
-              >
-                <Plus className="w-2.5 h-2.5" />
-                <span>{t('common.addTag')}</span>
-              </button>
-            )}
           </div>
         </div>
 
@@ -328,19 +287,13 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
                 </div>
                 <div
                   ref={leftScrollRef}
-                  onMouseEnter={() => {
-                    activePaneRef.current = 'left';
-                  }}
-                  onTouchStart={() => {
-                    activePaneRef.current = 'left';
-                  }}
-                  onWheel={() => {
+                  onPointerEnter={() => {
                     activePaneRef.current = 'left';
                   }}
                   onScroll={() => handleScroll('left')}
                   className="flex-1 p-4 sm:p-5 overflow-y-auto font-mono text-xs whitespace-pre-wrap select-text leading-relaxed text-zinc-400"
                 >
-                  {renderOriginalDiff()}
+                  {renderDiffPane(false)}
                 </div>
               </div>
 
@@ -354,19 +307,13 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
                 </div>
                 <div
                   ref={rightScrollRef}
-                  onMouseEnter={() => {
-                    activePaneRef.current = 'right';
-                  }}
-                  onTouchStart={() => {
-                    activePaneRef.current = 'right';
-                  }}
-                  onWheel={() => {
+                  onPointerEnter={() => {
                     activePaneRef.current = 'right';
                   }}
                   onScroll={() => handleScroll('right')}
                   className="flex-1 p-4 sm:p-5 overflow-y-auto font-mono text-xs whitespace-pre-wrap select-text leading-relaxed bg-zinc-900/15"
                 >
-                  {renderProposedDiff()}
+                  {renderDiffPane(true)}
                 </div>
               </div>
             </div>

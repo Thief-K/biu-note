@@ -78,7 +78,7 @@ export default function NoteReader({ note }: NoteReaderProps) {
 
       const data = await res.json();
       setIsAiDrawerOpen(false);
-      openDiff({ ...data, original_content: note.content });
+      openDiff(data);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       setAiError(msg);
@@ -118,11 +118,7 @@ export default function NoteReader({ note }: NoteReaderProps) {
               icon={ListTree}
               size="md"
               shape="rounded-full"
-              className={
-                isOutlineOpen
-                  ? 'bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 border-emerald-500/40'
-                  : 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
-              }
+              variant={isOutlineOpen ? 'emerald' : 'default'}
               onClick={() => setIsOutlineOpen((prev) => !prev)}
             />
           )}
@@ -132,11 +128,7 @@ export default function NoteReader({ note }: NoteReaderProps) {
             icon={Wand2}
             size="md"
             shape="rounded-full"
-            className={
-              isAiDrawerOpen
-                ? 'bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 border-emerald-500/40'
-                : 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
-            }
+            variant={isAiDrawerOpen ? 'emerald' : 'default'}
             onClick={() => setIsAiDrawerOpen((prev) => !prev)}
           />
         </div>
