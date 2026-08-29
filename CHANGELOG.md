@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.3] - 2026-08-30
+
+### Performance
+- **Docker Layer Caching & Incremental Pull Optimization**:
+  - Integrated `pnpm fetch` to strictly cache dependencies based on `pnpm-lock.yaml`, preventing routine version bumps in `package.json` from invalidating the layer cache.
+  - Employed `pnpm deploy --prod` to isolate backend runtime dependencies, eliminating ~40MB of devDependencies from the production image and reducing routine update pulls to ~1.5MB.
+
+### Fixed
+- **Backend Type Definition**: Added `original_content` optional property to `AiProcessResponse` in backend types to ensure 100% strict TypeScript compilation.
+
+---
+
 ## [1.0.2] - 2026-08-30
 
 ### Added
@@ -57,6 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Docker & CI/CD**: Production `Dockerfile` and automated multi-arch GHCR publishing pipeline.
 - **License**: Released under standard MIT License.
 
+[1.0.3]: https://github.com/Thief-K/biu-note/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/Thief-K/biu-note/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/Thief-K/biu-note/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/Thief-K/biu-note/releases/tag/v1.0.0
