@@ -54,7 +54,7 @@ export default {
     placeholder: '从这里开始你的 Markdown 记录...',
     outline: '大纲目录',
     noHeadings: '当前笔记暂无大纲标题',
-    aiModify: 'AI 协同修改',
+    aiModify: 'AI 修改',
     aiDraft: 'AI 智能起草',
     aiPromptPlaceholder: '告诉 AI 你想如何优化这篇笔记...',
     aiDraftPlaceholder: '告诉 AI 你想起草什么主题的笔记...',
@@ -69,15 +69,15 @@ export default {
     emptyPreview: '暂无预览内容'
   },
   diff: {
-    mergeTitle: 'AI 协同整合提案',
-    newTitle: 'AI 智能起草提案',
-    targetFile: '目标合并文件：{file}',
+    mergeTitle: 'AI 建议合并',
+    newTitle: 'AI 智能起草',
+    targetFile: '合并至 {file}',
     createFlat: '创建全新独立笔记',
-    original: '当前原始内容',
-    proposed: 'AI 建议合并后内容',
+    original: '原始内容',
+    proposed: '建议内容',
     newContentPreview: '起草内容预览与编辑',
-    refineLabel: '继续对话微调',
-    refinePrompt: '输入你的修改意见，如“增加代码示例”...'
+    refineLabel: '微调指令',
+    refinePrompt: '输入微调指令 (如“增加代码示例”)...'
   },
   settings: {
     title: '设置',

@@ -637,13 +637,18 @@ server.post(
       return;
     }
 
-    // Search Similar Notes (hybrid retrieval with content or memo)
+    // 4. AI Process (Intelligent Capture & Modification Engine)
+    const targetFilepath = request.body?.filepath ? getSafeRelativePath(request.body.filepath) : '';
+
+    // Search Similar Notes (hybrid retrieval with content or memo, skip if modifying a specific note)
     const similarNotes: Array<{ filepath: string; similarity: number; content: string }> = [];
     try {
       await syncNotesFolder(true);
-      const searchTarget = effectiveContent || effectiveMemo;
+      const searchTarget = effectiveMemo || effectiveContent;
       const searchResults = await retrieveRelevantNotes(searchTarget, config, 3);
       for (const res of searchResults) {
+        // Skip current editing file from candidates
+        if (targetFilepath && res.filepath === targetFilepath) continue;
         const fullPath = path.join(notesDir, res.filepath);
         if (fs.existsSync(fullPath)) {
           const fileContent = fs.readFileSync(fullPath, 'utf8');
@@ -660,46 +665,56 @@ server.post(
     }
 
     // Build System Prompt
-    const systemPrompt = `You are BiuNote Agent, a strict and expert knowledge-management assistant.
-Your job is to parse messy user inputs or draft requests and organize them beautifully into clean Markdown format.
+    const systemPrompt = `You are BiuNote Copilot, an expert Markdown knowledge editor and writing assistant.
+Your goal is to process note drafts, capture ideas, or modify existing notes based on user instructions, producing clean, high-fidelity Markdown documents.
 
-Instructions:
-1. Strip all conversational filler words and meta-dialogues. Keep only high-value knowledge, explanations, code blocks, and insights.
-2. Structure the output into standard, clean Markdown with proper headers (#, ##, ###).
-3. If provided with similar existing notes in context, evaluate if the new input updates, fixes, or expands any of them. If it belongs in one of those files, return "action": "merge", specify the target filename in "target_file", and provide the fully integrated content (the original merged with the new content) in "diff_content".
-4. If it's a completely new topic, draft creation, or doesn't match any similarity candidate, return "action": "create", generate an optimized target filename (ending in .md) in "target_file", a human-friendly title in "proposed_title", and relevant tags in "proposed_tags". Put the fully formatted clean markdown in "diff_content".
-5. High Priority: If user provided a "memo" directive (e.g. "write an outline for React 19"), you MUST strictly obey it as the creation/filter criteria.
+Key Principles:
+1. Pure Markdown: Never output YAML frontmatter or conversational meta-dialogues (e.g. "Sure, here is..."). Output only the clean Markdown document in "diff_content".
+2. Handling Modification / Transformation Requests (when both content and memo instruction are provided):
+   - If user asks to summarize (e.g., "生成总结", "总结要点", "TL;DR"): Carefully analyze the content, extract key takeaways, and integrate a clear summary section (e.g., ## 核心总结 or ## 要点提炼) into the note (at the beginning or end as appropriate), while preserving the rest of the valuable content.
+   - If user asks to polish, proofread, format, or expand: Apply the requested edits directly to the content, improving clarity, fixing typos/grammar, or elaborating on key points while keeping the document's structure intact.
+   - Always return the full modified document in "diff_content", with "action": "merge", and preserve the original title/filename unless explicitly asked to rename.
+3. Handling New Drafts / Idea Capture:
+   - Organize the input into standard, clean Markdown with proper headers (#, ##, ###), lists, and formatting.
+   - If it belongs in an existing candidate note from context, return "action": "merge" with target_file.
+   - Otherwise, return "action": "create", with an optimized filename in "target_file", a clear title in "proposed_title", and relevant tags in "proposed_tags".
 
-You must respond ONLY with a valid JSON object matching the requested schema, without markdown code block wrappers around the JSON itself.
-Schema format:
+Output Schema (MUST respond with a valid JSON object only):
 {
   "action": "create" | "merge",
-  "target_file": "React性能优化.md",
-  "proposed_title": "React 性能优化指南",
-  "proposed_tags": ["React", "前端"],
-  "diff_content": "# React 性能优化指南\\n\\n..."
+  "target_file": "filename.md",
+  "proposed_title": "Note Title",
+  "proposed_tags": ["Tag1", "Tag2"],
+  "diff_content": "# Full Markdown content here..."
 }`;
 
     // Build User Prompt
     let userPrompt = '';
+    if (targetFilepath) {
+      userPrompt += `### Target File:\n${targetFilepath}\n\n`;
+    }
     if (effectiveContent) {
-      userPrompt += `### User Input (Content):\n${effectiveContent}\n\n`;
+      userPrompt += `### Current Note Content:\n${effectiveContent}\n\n`;
     }
     if (effectiveMemo) {
-      userPrompt += `### User Micro-Instruction (Memo / Topic):\n${effectiveMemo}\n\n`;
+      userPrompt += `### User Instruction / Directive (Memo):\n${effectiveMemo}\n\n`;
     }
     if (similarNotes.length > 0) {
-      userPrompt += `### Similar Existing Notes (Candidates):\n`;
+      userPrompt += `### Similar Notes for Reference (Candidates):\n`;
       similarNotes.forEach((n, idx) => {
         userPrompt += `Candidate [${idx}] File: ${n.filepath} (Similarity: ${n.similarity.toFixed(4)})\n\`\`\`markdown\n${n.content}\n\`\`\`\n\n`;
       });
-    } else {
-      userPrompt += `No similar notes found in the workspace.\n\n`;
     }
 
     try {
       const rawResult = await callLLM(systemPrompt, userPrompt, config, true);
       const parsed = parseJSONFromLLM(rawResult);
+      if (parsed && typeof parsed === 'object') {
+        parsed.original_content = effectiveContent;
+        if (targetFilepath && !parsed.target_file) {
+          parsed.target_file = targetFilepath;
+        }
+      }
       return parsed;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);

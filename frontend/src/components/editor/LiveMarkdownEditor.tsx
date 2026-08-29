@@ -268,7 +268,7 @@ export default function LiveMarkdownEditor({
       const data = await res.json();
       setIsAiDrawerOpen(false);
       setAiError('');
-      openDiff(data);
+      openDiff({ ...data, original_content: content });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       setAiError(msg);

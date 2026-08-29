@@ -78,7 +78,7 @@ export default function NoteReader({ note }: NoteReaderProps) {
 
       const data = await res.json();
       setIsAiDrawerOpen(false);
-      openDiff(data);
+      openDiff({ ...data, original_content: note.content });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       setAiError(msg);

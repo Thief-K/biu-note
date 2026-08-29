@@ -69,15 +69,15 @@ export default {
     emptyPreview: 'No preview content'
   },
   diff: {
-    mergeTitle: 'AI Merge Proposal',
-    newTitle: 'AI Draft Proposal',
-    targetFile: 'Target File: {file}',
+    mergeTitle: 'AI Merge',
+    newTitle: 'AI Draft',
+    targetFile: 'Merge into {file}',
     createFlat: 'Create New Note',
-    original: 'Original Content',
-    proposed: 'AI Proposed Merged Content',
+    original: 'Original',
+    proposed: 'Proposed',
     newContentPreview: 'Draft Content Preview & Edit',
-    refineLabel: 'Refine with AI',
-    refinePrompt: 'Provide instructions, e.g. "Add code samples"...'
+    refineLabel: 'Refine',
+    refinePrompt: 'Refine instruction, e.g. "Add code samples"...'
   },
   settings: {
     title: 'Settings',
