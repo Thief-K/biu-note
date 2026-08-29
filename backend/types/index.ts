@@ -56,6 +56,7 @@ export interface AiProcessResponse {
   proposed_title?: string;
   proposed_tags?: string[];
   diff_content: string;
+  original_content?: string;
 }
 
 export interface GitResult {

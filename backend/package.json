@@ -14,11 +14,11 @@
     "@fastify/static": "^7.0.4",
     "dotenv": "^16.4.5",
     "fastify": "^4.28.1",
-    "openai": "^4.52.7"
+    "openai": "^4.52.7",
+    "tsx": "^4.19.3"
   },
   "devDependencies": {
     "@types/node": "^22.13.0",
-    "tsx": "^4.19.3",
     "typescript": "7.0.2"
   },
   "engines": {

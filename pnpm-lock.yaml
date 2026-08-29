@@ -47,13 +47,13 @@ importers:
       openai:
         specifier: ^4.52.7
         version: 4.104.0(encoding@0.1.13)
+      tsx:
+        specifier: ^4.19.3
+        version: 4.23.12
     devDependencies:
       '@types/node':
         specifier: ^22.13.0
         version: 22.20.1
-      tsx:
-        specifier: ^4.19.3
-        version: 4.23.12
       typescript:
         specifier: 7.0.2
         version: 7.0.2
