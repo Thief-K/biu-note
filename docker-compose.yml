@@ -1,6 +1,6 @@
 services:
   biunote:
-    image: ghcr.io/thief-k/biu-note:1.0.0
+    image: ghcr.io/thief-k/biu-note:1.0.1
     container_name: biunote
     restart: unless-stopped
     ports:
