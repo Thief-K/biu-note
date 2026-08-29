@@ -111,10 +111,40 @@ biu-note/
 - **Typography & Inputs**:
   - Prefer concise icon buttons over text labels.
   - Keep all prompt and error copy minimalist, crisp, and concise.
-  - When an input has a descriptive `label`, keep placeholder minimal (`placeholder="请输入"`).
+  - When an input has a descriptive `label`, keep placeholder minimal (e.g., `placeholder="Enter..."`).
 - **Anti-FOUC**: `index.html` uses Critical Inline CSS and synchronous `<head>` script to eliminate theme flicker.
 
 ### Internationalization (i18n) Invariants
 - **No Hardcoded UI Strings**: All user-facing labels, buttons, placehholders, alerts, and confirmations must use `useI18n()` hook via `t('category.key', params)`.
 - **Synchronized Dictionaries**: Any key added to `frontend/src/i18n/locales/zh.ts` must have an identical counterpart in `frontend/src/i18n/locales/en.ts` (enforced by automated unit tests).
 - **Concise Translations**: Keep English and Chinese copy concise, crisp, and clear without unnecessary verbiage.
+
+---
+
+## 4. Release & Version Bumping Workflow
+
+When instructed to **"Bump to v[x.x.x]"**, **"Release v[x.x.x]"**, or **"更新到 v[x.x.x] 版本"**, strictly follow this 5-step Standard Operating Procedure (SOP):
+
+1. **Synchronize Version Identifiers**:
+   - Root `package.json`: update `"version": "x.x.x"`
+   - Frontend `frontend/package.json`: update `"version": "x.x.x"`
+   - Backend `backend/package.json`: update `"version": "x.x.x"`
+   - Production config `docker-compose.yml`: update `image: ghcr.io/thief-k/biu-note:x.x.x`
+
+2. **Update Changelog (`CHANGELOG.md`)**:
+   - Follow Keep a Changelog 1.1.0 specifications and insert `## [x.x.x] - YYYY-MM-DD` at the top of `CHANGELOG.md`;
+   - Categorize changes systematically (`### Added`, `### Changed`, `### Fixed`, `### Performance`, etc.);
+   - Update version comparison link references at the bottom (e.g., `[x.x.x]: https://github.com/Thief-K/biu-note/compare/v<prev>...vx.x.x`).
+
+3. **Execute Comprehensive Automated Verification**:
+   - `pnpm test` (Ensure 100% unit tests pass)
+   - `pnpm lint` (Ensure zero code style / type lint errors)
+   - `pnpm --filter biunote-frontend build` (Ensure production bundling and TypeScript checks pass)
+
+4. **Local Git Commit & Tagging (Do not push automatically; wait for user confirmation)**:
+   - Stage and commit all changes: `git commit -m "chore(release): bump version to vx.x.x and update CHANGELOG.md"`
+   - Create annotated tag: `git tag -a vx.x.x -m "Release vx.x.x: <Concise Summary>"`
+
+5. **Report & Provide Remote Push Commands**:
+   - Inform the user that the local bump, test verification, and tagging are complete;
+   - Provide the exact push command to trigger the GitHub Actions release build: `git push && git push origin vx.x.x`.
