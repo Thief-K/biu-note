@@ -3,5 +3,6 @@ dist
 notes
 data
 scratch
+*.tsbuildinfo
 .DS_Store
 Thumbs.db

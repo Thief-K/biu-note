@@ -7,10 +7,10 @@ WORKDIR /app
 # 启用 pnpm（与 lockfileVersion 9 保持一致）
 RUN corepack enable && corepack prepare pnpm@9 --activate
 
-# 复制包清单（利用 Docker 缓存层）
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY frontend/package.json ./frontend/
-COPY backend/package.json ./backend/
+# 复制包清单与 TS 配置（利用 Docker 缓存层）
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json ./
+COPY frontend/package.json frontend/tsconfig.json ./frontend/
+COPY backend/package.json backend/tsconfig.json ./backend/
 
 # 安装所有依赖
 RUN pnpm install --frozen-lockfile
@@ -33,6 +33,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
     apk add --no-cache git tzdata
 
 # 复制后端源码与前端构建产物
+COPY --from=builder /app/package.json /app/pnpm-workspace.yaml ./
 COPY --from=builder /app/backend ./backend
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/backend/node_modules ./backend/node_modules
@@ -53,4 +54,4 @@ VOLUME ["/app/notes"]
 EXPOSE 3000
 
 WORKDIR /app/backend
-CMD ["node", "server.js"]
+CMD ["npx", "tsx", "server.ts"]

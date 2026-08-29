@@ -8,11 +8,15 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "npx oxlint backend/ frontend/src/",
-    "format": "npx oxlint --write backend/ frontend/src/"
+    "format": "npx oxlint --write backend/ frontend/src/",
+    "typecheck": "tsc -b"
   },
   "devDependencies": {
+    "@types/node": "^22.13.0",
     "concurrently": "^8.2.2",
     "oxlint": "^0.15.0",
+    "tsx": "^4.19.3",
+    "typescript": "7.0.2",
     "vitest": "^4.1.11"
   },
   "engines": {

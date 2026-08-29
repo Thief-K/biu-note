@@ -1,4 +1,4 @@
-﻿# BiuNote AI Agent Guidelines (AGENTS.md)
+# BiuNote AI Agent Guidelines (AGENTS.md)
 
 ## 1. Quick Development Commands
 
@@ -29,18 +29,20 @@ pnpm --filter biunote-frontend build   # Build frontend production bundle
 
 ```text
 biu-note/
-├── backend/            # Fastify backend, SQLite DB, Git & Vector engine
+├── backend/            # Fastify backend, SQLite DB, Git & Vector engine (TypeScript)
 │   ├── lib/            # Shared utilities (note parsing, diffing)
-│   ├── server.js       # Fastify server entry point
-│   ├── db.js           # SQLite metadata layer (node:sqlite)
-│   ├── git.js          # Git auto-commit tracking layer
-│   └── vector.js       # JIT vector embedding & cosine search
-├── frontend/           # React 19 SPA, Tailwind 4, Zustand i18n & editor
+│   ├── types/          # Backend TypeScript interfaces & types
+│   ├── server.ts       # Fastify server entry point
+│   ├── db.ts           # SQLite metadata layer (node:sqlite)
+│   ├── git.ts          # Git auto-commit tracking layer
+│   └── vector.ts       # JIT vector embedding & cosine search
+├── frontend/           # React 19 SPA, Tailwind 4, Zustand i18n & editor (TypeScript)
 │   ├── src/
-│   │   ├── components/ # Atomic & common UI components
-│   │   ├── stores/     # Zustand stores (notes, sparks, i18n, theme)
-│   │   ├── i18n/       # Lightweight i18n store & locales (en/zh)
-│   │   └── pages/      # Route pages (Notes, Sparks, Chat, Settings)
+│   │   ├── components/ # Atomic & common UI components (.tsx)
+│   │   ├── stores/     # Zustand stores (notes, sparks, i18n, theme) (.ts)
+│   │   ├── i18n/       # Lightweight i18n store & locales (en/zh) (.ts)
+│   │   ├── pages/      # Route pages (Notes, Sparks, Chat, Settings) (.tsx)
+│   │   └── types/      # Frontend TypeScript interfaces & types
 │   └── dist/           # Production static assets served by backend
 ├── notes/              # Local notes directory (auto-managed Git repo)
 │   ├── .biunote/       # Native SQLite database (biunote.db) & vector cache
@@ -50,6 +52,7 @@ biu-note/
 ├── DESIGN.md           # System architecture specification
 ├── Dockerfile          # Multi-stage production container build
 ├── docker-compose.yml  # Production deployment specification
+├── tsconfig.json       # Composite TypeScript project root configuration
 ├── README.md           # Product documentation (English)
 └── README_zh.md        # Product documentation (Chinese)
 ```
@@ -66,7 +69,7 @@ biu-note/
 - **JIT Embeddings**: Vector embeddings are strictly generated **Just-in-Time (JIT)** in `notes/.biunote/vectors.json` (ignored in `.gitignore`) prior to `/api/ai/process` or `/api/ai/chat`. Never trigger batch embeddings during startup, save, or import.
 
 ### Architecture & Runtime
-- **Entry Points**: `backend/server.js` and `frontend/src/main.jsx`. Production serves assets from `frontend/dist/`.
+- **Entry Points**: `backend/server.ts` and `frontend/src/main.tsx`. Production serves assets from `frontend/dist/`.
 - **Native Node.js 22 Runtime**: Uses native `import.meta.dirname` and built-in `node:sqlite` (`DatabaseSync`). `biunote.db` is tracked by Git, while `config.json` and `vectors.json` are ignored in `notes/.gitignore`. Git features gracefully degrade if Git is not installed.
 - **Authentication**: All private API endpoints require `Authorization: Bearer <LOGIN_TOKEN>` header (`localStorage.biunote_token`).
 
@@ -116,5 +119,5 @@ biu-note/
 
 ### Internationalization (i18n) Invariants
 - **No Hardcoded UI Strings**: All user-facing labels, buttons, placehholders, alerts, and confirmations must use `useI18n()` hook via `t('category.key', params)`.
-- **Synchronized Dictionaries**: Any key added to `frontend/src/i18n/locales/zh.js` must have an identical counterpart in `frontend/src/i18n/locales/en.js` (enforced by automated unit tests).
+- **Synchronized Dictionaries**: Any key added to `frontend/src/i18n/locales/zh.ts` must have an identical counterpart in `frontend/src/i18n/locales/en.ts` (enforced by automated unit tests).
 - **Concise Translations**: Keep English and Chinese copy concise, crisp, and clear without unnecessary verbiage.
