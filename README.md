@@ -1,4 +1,4 @@
-# ⚡ BiuNote
+﻿# ⚡ BiuNote
 
 <div align="center">
 
@@ -23,71 +23,92 @@
 
 ---
 
-## 🚀 Quick Start
+## 🐳 Docker Deployment (Recommended)
 
-### 1. Requirements
-- **Node.js**: `>= 22.0.0`
-- **pnpm**: `>= 9.0.0`
-- **Git**: Installed and configured
+BiuNote provides official pre-built multi-architecture Docker images. You can deploy it in seconds using a single `docker-compose.yml` file without configuring complex development environments.
 
-### 2. Install & Configure
+### 1. Configure `docker-compose.yml`
+
+Create a directory (e.g. `~/biunote`) on your server and create `docker-compose.yml`:
+
+```yaml
+services:
+  biunote:
+    # Official GHCR image:
+    image: ghcr.io/thief-k/biu-note:latest
+    # Mirror proxy for faster downloads in mainland China:
+    # image: ghcr.dockerproxy.net/thief-k/biu-note:latest
+    container_name: biunote
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NOTES_DIR=/app/notes
+      - LOGIN_TOKEN=your-secret-token     # Set your custom web access token
+      - TZ=Asia/Shanghai
+      # Optional: AI Provider Configuration (can also be configured via Web Settings)
+      # - AI_BASE_URL=https://api.openai.com/v1
+      # - AI_API_KEY=sk-xxx
+      # - AI_MODEL=gpt-4o-mini
+      # - AI_EMBEDDING_MODEL=text-embedding-3-small
+    volumes:
+      # Persistent storage mount: includes Markdown notes, Git repository, and SQLite DB
+      - ./notes:/app/notes
+```
+
+### 2. Start Service
 
 ```bash
-git clone https://github.com/your-username/biu-note.git
-cd biu-note
-pnpm install
+docker compose up -d
 ```
 
-Configure `backend/.env`:
-
-```env
-PORT=3000
-NOTES_DIR=../notes
-LOGIN_TOKEN=biunote-secret-token
-
-# Optional: Configure AI provider (or configure via Settings page in Web UI)
-AI_BASE_URL=https://api.openai.com/v1
-AI_API_KEY=sk-your-api-key
-AI_MODEL=gpt-4o-mini
-AI_EMBEDDING_MODEL=text-embedding-3-small
-```
-
-### 3. Run Development Server
-
-```bash
-pnpm dev
-```
-
-- **Frontend**: [http://localhost:5173](http://localhost:5173)
-- **Backend API**: [http://localhost:3000](http://localhost:3000)
+Access `http://<your-server-ip>:3000` to start using BiuNote.
 
 ---
 
-## 🧪 Development Commands
+## 🔄 One-Click Updates
 
+When a new version is released, you do not need to rebuild or re-upload files. Simply run:
+
+### Method A: Manual Update (Recommended)
 ```bash
-pnpm test                              # Run automated tests (Vitest)
-pnpm lint                              # Code linting (oxlint)
-pnpm --filter biunote-frontend build   # Production frontend build
+docker compose pull && docker compose up -d
+```
+> Docker will pull updated layers and smoothly restart the container in seconds. All data in `./notes` remains untouched.
+
+### Method B: Automated Updates (Watchtower)
+For unattended automatic updates, add the `watchtower` service to `docker-compose.yml`:
+```yaml
+  watchtower:
+    image: containrrr/watchtower
+    container_name: biunote-watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 3600 --cleanup biunote
 ```
 
 ---
 
-## 📂 Project Structure
+## ⚙️ Environment Variables
 
-```text
-biu-note/
-├── backend/            # Fastify backend, SQLite DB, Git & Vector engine
-├── frontend/           # React 19 SPA, Tailwind 4, Zustand i18n & editor
-│   └── src/i18n/       # Lightweight i18n store & locales (en/zh)
-├── notes/              # Local notes directory (auto-managed Git repo)
-│   ├── .biunote/       # Native SQLite database & vector cache
-│   └── sparks/         # Instant sparks files
-├── AGENTS.md           # AI Agent guidelines & invariant rules
-├── DESIGN.md           # System architecture specification
-├── README.md           # Product documentation (English)
-└── README_zh.md        # Product documentation (Chinese)
-```
+| Variable | Default | Description |
+| :--- | :--- | :--- |
+| `PORT` | `3000` | Server listening port |
+| `NOTES_DIR` | `/app/notes` | Notes and metadata storage path |
+| `LOGIN_TOKEN` | `biunote-secret-token` | Web access token (strongly recommended to change in production) |
+| `TZ` | `Asia/Shanghai` | Container timezone |
+| `AI_BASE_URL` | - | OpenAI-compatible API base URL (optional, configurable in Web UI) |
+| `AI_API_KEY` | - | AI API key (optional, configurable in Web UI) |
+| `AI_MODEL` | `gpt-4o-mini` | LLM model name for chat and note processing |
+| `AI_EMBEDDING_MODEL`| `text-embedding-3-small` | Vector embedding model name |
+
+---
+
+## 🛠️ Local Development & Architecture
+
+- **Local Setup & Development Commands**: See [AGENTS.md](AGENTS.md)
+- **System Architecture & Design Specifications**: See [DESIGN.md](DESIGN.md)
 
 ---
 

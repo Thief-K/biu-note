@@ -1,4 +1,4 @@
-# ⚡ BiuNote
+﻿# ⚡ BiuNote
 
 <div align="center">
 
@@ -23,71 +23,92 @@
 
 ---
 
-## 🚀 快速上手
+## 🐳 Docker 极简自部署（推荐）
 
-### 1. 环境准备
-- **Node.js**: `>= 22.0.0`
-- **pnpm**: `>= 9.0.0`
-- **Git**: 操作系统已安装并配置 `git`
+BiuNote 提供官方预编译的多架构 Docker 镜像，只需一个 `docker-compose.yml` 即可在秒级内完成部署，无需配置复杂的编译环境。
 
-### 2. 安装与配置
+### 1. 编写 `docker-compose.yml`
+
+在服务器上创建任意目录（如 `~/biunote`），并在该目录下创建 `docker-compose.yml`：
+
+```yaml
+services:
+  biunote:
+    # 官方镜像源（海外服务器）：
+    image: ghcr.io/thief-k/biu-note:latest
+    # 国内服务器推荐使用高速镜像代理源加速拉取：
+    # image: ghcr.dockerproxy.net/thief-k/biu-note:latest
+    container_name: biunote
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NOTES_DIR=/app/notes
+      - LOGIN_TOKEN=your-secret-token     # 自定义 Web 登录口令
+      - TZ=Asia/Shanghai
+      # 可选：直接注入 AI 配置（也可启动后在 Web 设置面板中配置）
+      # - AI_BASE_URL=https://api.openai.com/v1
+      # - AI_API_KEY=sk-xxx
+      # - AI_MODEL=gpt-4o-mini
+      # - AI_EMBEDDING_MODEL=text-embedding-3-small
+    volumes:
+      # 持久化挂载点：包含所有 Markdown 笔记、独立 Git 仓库与 SQLite 数据库
+      - ./notes:/app/notes
+```
+
+### 2. 启动服务
 
 ```bash
-git clone https://github.com/your-username/biu-note.git
-cd biu-note
-pnpm install
+docker compose up -d
 ```
 
-配置 `backend/.env`：
-
-```env
-PORT=3000
-NOTES_DIR=../notes
-LOGIN_TOKEN=biunote-secret-token
-
-# 可选：配置 AI 接口（也可启动后在 Web 界面「设置」中配置）
-AI_BASE_URL=https://api.openai.com/v1
-AI_API_KEY=sk-your-api-key
-AI_MODEL=gpt-4o-mini
-AI_EMBEDDING_MODEL=text-embedding-3-small
-```
-
-### 3. 启动服务
-
-```bash
-pnpm dev
-```
-
-- **前端界面**: [http://localhost:5173](http://localhost:5173)
-- **后端接口**: [http://localhost:3000](http://localhost:3000)
+启动完成后，访问 `http://<你的服务器IP>:3000` 即可开始使用。
 
 ---
 
-## 🧪 常用开发命令
+## 🔄 镜像一键更新
 
+当发布新版本时，无需重新上传源码或重新构建，只需在服务器的 `docker-compose.yml` 所在目录执行：
+
+### 方式 A：手动一键拉取更新（推荐）
 ```bash
-pnpm test                              # 运行自动化测试 (Vitest)
-pnpm lint                              # 代码风格检查 (oxlint)
-pnpm --filter biunote-frontend build   # 构建前端生产产物
+docker compose pull && docker compose up -d
+```
+> Docker 将自动拉取最新的代码层并平滑重启容器，数据完全保留在 `./notes` 目录中，数秒内即可完成升级。
+
+### 方式 B：全自动静默热更新（Watchtower）
+如需实现完全无人值守的自动化升级，可在 `docker-compose.yml` 中追加 `watchtower` 服务：
+```yaml
+  watchtower:
+    image: containrrr/watchtower
+    container_name: biunote-watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 3600 --cleanup biunote
 ```
 
 ---
 
-## 📂 项目结构
+## ⚙️ 环境变量说明
 
-```text
-biu-note/
-├── backend/            # Fastify 后端服务、SQLite 数据库、Git 提交与向量引擎
-├── frontend/           # React 19 前端应用、Tailwind 4、Zustand i18n 与编辑器
-│   └── src/i18n/       # 轻量 i18n 状态引擎与中英文字典 (zh/en)
-├── notes/              # 本地笔记知识库目录（自动管理的 Git 独立仓库）
-│   ├── .biunote/       # SQLite 数据库与向量缓存
-│   └── sparks/         # 灵感记录存储目录
-├── AGENTS.md           # 面向 AI Agent 的开发规范与硬性约束
-├── DESIGN.md           # 面向 AI Agent 的系统架构与设计说明书
-├── README.md           # 英文产品说明文档 (English)
-└── README_zh.md        # 中文产品说明文档 (Chinese)
-```
+| 环境变量 | 默认值 | 说明 |
+| :--- | :--- | :--- |
+| `PORT` | `3000` | 后端服务监听端口 |
+| `NOTES_DIR` | `/app/notes` | 笔记与元数据持久化存储目录 |
+| `LOGIN_TOKEN` | `biunote-secret-token` | Web 端访问口令（建议生产环境务必修改） |
+| `TZ` | `Asia/Shanghai` | 容器时区设置 |
+| `AI_BASE_URL` | - | OpenAI 兼容的 API Base URL（可选，可在前端设置） |
+| `AI_API_KEY` | - | AI 接口密钥（可选，可在前端设置） |
+| `AI_MODEL` | `gpt-4o-mini` | 对话与速记处理模型名称 |
+| `AI_EMBEDDING_MODEL`| `text-embedding-3-small` | 语义检索向量嵌入模型名称 |
+
+---
+
+## 🛠️ 本地开发与架构设计
+
+- **本地开发环境搭建与命令**：详见 [AGENTS.md](AGENTS.md)
+- **系统架构与技术设计说明**：详见 [DESIGN.md](DESIGN.md)
 
 ---
 

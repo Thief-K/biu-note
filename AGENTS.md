@@ -1,6 +1,6 @@
-# BiuNote AI Agent Guidelines (AGENTS.md)
+﻿# BiuNote AI Agent Guidelines (AGENTS.md)
 
-## 1. Quick Commands
+## 1. Quick Development Commands
 
 ```bash
 pnpm install                           # Install dependencies
@@ -10,7 +10,53 @@ pnpm lint                              # Run oxlint checks
 pnpm --filter biunote-frontend build   # Build frontend production bundle
 ```
 
-## 2. Operating Invariants & Rules
+### Local Setup & Environment
+- **Runtime Requirements**: Node.js `>= 22.0.0`, pnpm `>= 9.0.0`, Git installed.
+- **Backend Configuration** (`backend/.env`):
+  ```env
+  PORT=3000
+  NOTES_DIR=../notes
+  LOGIN_TOKEN=biunote-secret-token
+  AI_BASE_URL=https://api.openai.com/v1
+  AI_API_KEY=sk-your-api-key
+  AI_MODEL=gpt-4o-mini
+  AI_EMBEDDING_MODEL=text-embedding-3-small
+  ```
+
+---
+
+## 2. Project Directory Structure
+
+```text
+biu-note/
+├── backend/            # Fastify backend, SQLite DB, Git & Vector engine
+│   ├── lib/            # Shared utilities (note parsing, diffing)
+│   ├── server.js       # Fastify server entry point
+│   ├── db.js           # SQLite metadata layer (node:sqlite)
+│   ├── git.js          # Git auto-commit tracking layer
+│   └── vector.js       # JIT vector embedding & cosine search
+├── frontend/           # React 19 SPA, Tailwind 4, Zustand i18n & editor
+│   ├── src/
+│   │   ├── components/ # Atomic & common UI components
+│   │   ├── stores/     # Zustand stores (notes, sparks, i18n, theme)
+│   │   ├── i18n/       # Lightweight i18n store & locales (en/zh)
+│   │   └── pages/      # Route pages (Notes, Sparks, Chat, Settings)
+│   └── dist/           # Production static assets served by backend
+├── notes/              # Local notes directory (auto-managed Git repo)
+│   ├── .biunote/       # Native SQLite database (biunote.db) & vector cache
+│   └── sparks/         # Instant sparks stream files
+├── .github/workflows/  # Automated multi-arch CI/CD (GHCR docker publish)
+├── AGENTS.md           # AI Agent guidelines, invariants & developer reference
+├── DESIGN.md           # System architecture specification
+├── Dockerfile          # Multi-stage production container build
+├── docker-compose.yml  # Production deployment specification
+├── README.md           # Product documentation (English)
+└── README_zh.md        # Product documentation (Chinese)
+```
+
+---
+
+## 3. Operating Invariants & Rules
 
 ### Data & Storage
 - **Decoupled Metadata**: Physical `.md` files are **100% pure plaintext**—never inject YAML frontmatter or `#tag` lines. Tags and metadata reside exclusively in SQLite (`notes/.biunote/biunote.db`) which is tracked by Git.
