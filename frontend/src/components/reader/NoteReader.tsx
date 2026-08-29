@@ -112,21 +112,20 @@ export default function NoteReader({ note }: NoteReaderProps) {
 
         {/* Right: Tool Capsules */}
         <div className="flex items-center gap-2">
-          {/* Outline TOC toggle (Static position, disabled when no headings) */}
-          <IconButton
-            icon={ListTree}
-            size="md"
-            shape="rounded-full"
-            disabled={headings.length === 0}
-            className={
-              headings.length === 0
-                ? 'opacity-35 cursor-not-allowed text-zinc-500 border-zinc-800'
-                : isOutlineOpen
-                ? 'bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 border-emerald-500/40'
-                : 'text-zinc-400 hover:text-zinc-100 border-zinc-800'
-            }
-            onClick={() => headings.length > 0 && setIsOutlineOpen((prev) => !prev)}
-          />
+          {/* Outline TOC toggle: Only displayed when headings exist */}
+          {headings.length > 0 && (
+            <IconButton
+              icon={ListTree}
+              size="md"
+              shape="rounded-full"
+              className={
+                isOutlineOpen
+                  ? 'bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 border-emerald-500/40'
+                  : 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
+              }
+              onClick={() => setIsOutlineOpen((prev) => !prev)}
+            />
+          )}
 
           {/* AI Assistant Modify button */}
           <IconButton
@@ -136,7 +135,7 @@ export default function NoteReader({ note }: NoteReaderProps) {
             className={
               isAiDrawerOpen
                 ? 'bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 border-emerald-500/40'
-                : 'text-zinc-400 hover:text-emerald-500 dark:hover:text-emerald-400 border-zinc-800'
+                : 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
             }
             onClick={() => setIsAiDrawerOpen((prev) => !prev)}
           />

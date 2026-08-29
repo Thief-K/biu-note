@@ -342,50 +342,51 @@ export default function LiveMarkdownEditor({
             variant={isPreview ? 'blue' : 'default'}
             className={
               isPreview
-                ? 'bg-blue-500/20 text-blue-500 dark:text-blue-400 border-blue-500/40'
-                : 'text-zinc-400 hover:text-zinc-100 border-zinc-800'
+                ? 'bg-blue-500/20 text-blue-500 dark:text-blue-400 border-blue-500/40 hover:bg-blue-500/30'
+                : 'bg-blue-500/10 text-blue-500 dark:text-blue-400 border-blue-500/30 hover:bg-blue-500/20'
             }
             onClick={togglePreview}
           />
 
-          {/* Save Button with Unsaved Dirty State Indicator */}
-          <div className="relative">
+          {/* Save Button with Unsaved Dirty State Indicator: Only displayed in Edit mode */}
+          {!isPreview && (
+            <div className="relative">
+              <IconButton
+                icon={savedSuccess ? Check : Save}
+                loading={saving}
+                disabled={saving || !canSave}
+                size="md"
+                shape="rounded-full"
+                variant={savedSuccess ? 'emerald' : canSave ? 'amber' : 'default'}
+                className={
+                  savedSuccess
+                    ? 'bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 border-emerald-500/40 hover:bg-emerald-500/30'
+                    : canSave
+                    ? 'bg-amber-500/20 text-amber-500 dark:text-amber-400 border-amber-500/40 hover:bg-amber-500/30'
+                    : 'opacity-40 text-zinc-500 border-zinc-800'
+                }
+                onClick={handleSave}
+              />
+              {isDirty && (
+                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-400 animate-ping pointer-events-none" />
+              )}
+            </div>
+          )}
+
+          {/* Outline TOC toggle: Only displayed in Preview mode when headings exist */}
+          {isPreview && headings.length > 0 && (
             <IconButton
-              icon={savedSuccess ? Check : Save}
-              loading={saving}
-              disabled={saving || !canSave}
+              icon={ListTree}
               size="md"
               shape="rounded-full"
-              variant={savedSuccess ? 'emerald' : canSave ? 'amber' : 'default'}
               className={
-                savedSuccess
-                  ? 'bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 border-emerald-500/40 hover:bg-emerald-500/30'
-                  : canSave
-                  ? 'bg-amber-500/20 text-amber-500 dark:text-amber-400 border-amber-500/40 hover:bg-amber-500/30'
-                  : 'opacity-40 text-zinc-500 border-zinc-800'
+                isOutlineOpen
+                  ? 'bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 border-emerald-500/40'
+                  : 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
               }
-              onClick={handleSave}
+              onClick={() => setIsOutlineOpen((prev) => !prev)}
             />
-            {isDirty && (
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-400 animate-ping pointer-events-none" />
-            )}
-          </div>
-
-          {/* Outline TOC toggle (Static position, disabled when no headings) */}
-          <IconButton
-            icon={ListTree}
-            size="md"
-            shape="rounded-full"
-            disabled={headings.length === 0}
-            className={
-              headings.length === 0
-                ? 'opacity-35 cursor-not-allowed text-zinc-500 border-zinc-800'
-                : isOutlineOpen
-                ? 'bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 border-emerald-500/40'
-                : 'text-zinc-400 hover:text-zinc-100 border-zinc-800'
-            }
-            onClick={() => headings.length > 0 && setIsOutlineOpen((prev) => !prev)}
-          />
+          )}
 
           {/* AI Assistant Drawer toggle */}
           <IconButton
@@ -395,7 +396,7 @@ export default function LiveMarkdownEditor({
             className={
               isAiDrawerOpen
                 ? 'bg-emerald-500/20 text-emerald-500 dark:text-emerald-400 border-emerald-500/40'
-                : 'text-zinc-400 hover:text-emerald-500 dark:hover:text-emerald-400 border-zinc-800'
+                : 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
             }
             onClick={() => setIsAiDrawerOpen((prev) => !prev)}
           />
@@ -481,10 +482,10 @@ export default function LiveMarkdownEditor({
                   <button
                     type="button"
                     onClick={() => setIsAddingTag(true)}
-                    className="h-5 px-2 rounded-full bg-zinc-900/60 hover:bg-zinc-850 border border-dashed border-zinc-750 hover:border-emerald-500/40 text-zinc-400 hover:text-emerald-400 text-[11px] leading-none flex items-center gap-1 transition-all cursor-pointer select-none active:scale-95 shrink-0"
+                    className="h-5 px-2 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 hover:border-emerald-500/50 text-emerald-400 text-[11px] leading-none flex items-center gap-1 transition-all cursor-pointer select-none active:scale-95 shrink-0"
                     aria-label={t('common.addTag')}
                   >
-                    <Tag className="w-2.5 h-2.5" />
+                    <Tag className="w-2.5 h-2.5 text-emerald-400" />
                     <span>{t('common.addTag')}</span>
                   </button>
                 )}
