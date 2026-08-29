@@ -9,6 +9,7 @@ import { useI18n, type LocaleKey } from '../i18n';
 import PageHeader from '../components/common/PageHeader';
 import AlertBanner from '../components/common/AlertBanner';
 import IconButton from '../components/common/IconButton';
+import ContentContainer from '../components/common/ContentContainer';
 
 interface FormSettings {
   apiKey: string;
@@ -123,7 +124,7 @@ export default function SettingsPage() {
 
       {/* 2. Scrollable Body */}
       <div className="flex-1 overflow-y-auto px-4 md:px-8 py-4 pb-32">
-        <div className="max-w-3xl mx-auto flex flex-col gap-3">
+        <ContentContainer>
           {error && <AlertBanner variant="error" message={error} />}
 
           {/* Theme Settings Card (Flat Pure Border) */}
@@ -281,7 +282,7 @@ export default function SettingsPage() {
               onClick={handleLogout}
             />
           </div>
-        </div>
+        </ContentContainer>
       </div>
     </div>
   );

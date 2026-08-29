@@ -1,6 +1,7 @@
 import type { ComponentType, ReactNode } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import IconButton from './IconButton';
+import ContentContainer from './ContentContainer';
 
 export interface PageHeaderProps {
   onBack?: () => void;
@@ -28,7 +29,7 @@ export default function PageHeader({
 }: PageHeaderProps) {
   return (
     <div className="px-4 md:px-8 py-3.5 border-b border-zinc-850/80 shrink-0 select-none bg-zinc-950/60 backdrop-blur-xl">
-      <div className="max-w-3xl mx-auto flex flex-col gap-3">
+      <ContentContainer>
         <div className="flex items-center justify-between h-8">
           {/* Left: Optional Back Button + Badge Icon + Title + Optional Count */}
           <div className="flex items-center gap-2.5 h-8">
@@ -63,7 +64,7 @@ export default function PageHeader({
 
         {/* Optional Collapsible Dropdown or Filter Bar */}
         {children}
-      </div>
+      </ContentContainer>
     </div>
   );
 }

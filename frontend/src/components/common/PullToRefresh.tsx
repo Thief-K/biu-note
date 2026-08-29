@@ -141,7 +141,7 @@ export default function PullToRefresh({
 
       {/* Content wrapper with matching spring offset */}
       <div
-        className="h-full flex flex-col transition-transform duration-200 ease-out"
+        className="w-full min-h-full flex flex-col transition-transform duration-200 ease-out"
         style={{
           transform: pullDistance > 0 || isRefreshing ? `translate3d(0, ${pullDistance}px, 0)` : 'none'
         }}
