@@ -1,0 +1,7 @@
+node_modules
+dist
+notes
+data
+scratch
+.DS_Store
+Thumbs.db
