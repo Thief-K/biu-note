@@ -784,7 +784,7 @@ server.post(
       await syncNotesFolder(true);
       const searchResults = await retrieveRelevantNotes(lastUserMessage, config, 4);
       if (searchResults.length > 0) {
-        contextText += `### 相关知识库参考文件：\n`;
+        contextText += `### 相关笔记参考文件：\n`;
         for (const res of searchResults) {
           const fullPath = path.join(notesDir, res.filepath);
           if (fs.existsSync(fullPath)) {

@@ -41,10 +41,10 @@ export default {
     deleteConfirm: '确定删除这条灵感吗？'
   },
   chat: {
-    title: '知识库对话',
-    welcome: '你好！我是 BiuNote AI 助手。你可以向我提问关于你笔记中的任何内容，我会结合你的个人知识库为你解答。',
+    title: '笔记 AI 助手',
+    welcome: '随时问我任何关于笔记的内容...',
     placeholder: '输入关于你笔记的问题...',
-    thinking: '正在思考并检索知识库...',
+    thinking: '正在思考并检索笔记内容...',
     error: 'AI 回答生成失败，请检查设置。',
     noConfig: '尚未配置 AI API Key，请前往设置页面配置。',
     clearConfirm: '确定清空当前对话记录吗？',

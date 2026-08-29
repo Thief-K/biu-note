@@ -41,10 +41,10 @@ export default {
     deleteConfirm: 'Delete this spark?'
   },
   chat: {
-    title: 'Knowledge Chat',
-    welcome: 'Hello! I am BiuNote AI Assistant. Ask me anything about your notes, and I will answer grounded in your personal knowledge base.',
+    title: 'Note AI Assistant',
+    welcome: 'Ask me anything about your notes...',
     placeholder: 'Ask questions about your notes...',
-    thinking: 'Thinking and retrieving from knowledge base...',
+    thinking: 'Thinking and retrieving from notes...',
     error: 'Failed to generate AI response. Please check settings.',
     noConfig: 'AI API Key is not configured. Please configure in Settings.',
     clearConfirm: 'Clear current chat history?',
