@@ -21,10 +21,10 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
     apk add --no-cache git tzdata
 
 COPY --from=builder /app/package.json /app/pnpm-workspace.yaml ./
-COPY --from=builder /app/backend ./backend
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/backend/node_modules ./backend/node_modules
 COPY --from=builder /app/frontend/dist ./frontend/dist
+COPY --from=builder /app/backend ./backend
 
 RUN mkdir -p /app/notes
 
