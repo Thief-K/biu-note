@@ -121,13 +121,13 @@ export const setSetting = async (key: string, value: string | number | boolean):
   writeConfig(config);
 };
 
-// Get combined AI Config (stored config.json + fallback process.env values)
+// Get AI Config from config.json
 export const getAIConfig = async (): Promise<AIConfig> => {
   const config = readConfig();
-  const apiKey = config.openai_api_key || process.env.OPENAI_API_KEY || '';
-  const baseUrl = config.openai_base_url || process.env.OPENAI_BASE_URL || '';
-  const model = config.openai_model || process.env.OPENAI_MODEL || '';
-  const embeddingModel = config.embedding_model || process.env.EMBEDDING_MODEL || '';
+  const apiKey = config.openai_api_key || '';
+  const baseUrl = config.openai_base_url || '';
+  const model = config.openai_model || '';
+  const embeddingModel = config.embedding_model || '';
   return { apiKey, baseUrl, model, embeddingModel };
 };
 

@@ -17,11 +17,8 @@ pnpm --filter biunote-frontend build   # Build frontend production bundle
   PORT=3000
   NOTES_DIR=../notes
   LOGIN_TOKEN=biunote-secret-token
-  AI_BASE_URL=https://api.openai.com/v1
-  AI_API_KEY=sk-your-api-key
-  AI_MODEL=gpt-4o-mini
-  AI_EMBEDDING_MODEL=text-embedding-3-small
   ```
+  *(AI API Key and models are configured in Web UI and stored in `notes/.biunote/config.json`)*
 
 ---
 

@@ -1,4 +1,4 @@
-﻿# ⚡ BiuNote
+# ⚡ BiuNote
 
 <div align="center">
 
@@ -34,25 +34,15 @@ BiuNote 提供官方预编译的多架构 Docker 镜像，只需一个 `docker-c
 ```yaml
 services:
   biunote:
-    # 官方镜像源（海外服务器）：
     image: ghcr.io/thief-k/biu-note:latest
-    # 国内服务器推荐使用高速镜像代理源加速拉取：
-    # image: ghcr.dockerproxy.net/thief-k/biu-note:latest
     container_name: biunote
     restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
-      - NOTES_DIR=/app/notes
       - LOGIN_TOKEN=your-secret-token     # 自定义 Web 登录口令
       - TZ=Asia/Shanghai
-      # 可选：直接注入 AI 配置（也可启动后在 Web 设置面板中配置）
-      # - AI_BASE_URL=https://api.openai.com/v1
-      # - AI_API_KEY=sk-xxx
-      # - AI_MODEL=gpt-4o-mini
-      # - AI_EMBEDDING_MODEL=text-embedding-3-small
     volumes:
-      # 持久化挂载点：包含所有 Markdown 笔记、独立 Git 仓库与 SQLite 数据库
       - ./notes:/app/notes
 ```
 
@@ -98,10 +88,8 @@ docker compose pull && docker compose up -d
 | `NOTES_DIR` | `/app/notes` | 笔记与元数据持久化存储目录 |
 | `LOGIN_TOKEN` | `biunote-secret-token` | Web 端访问口令（建议生产环境务必修改） |
 | `TZ` | `Asia/Shanghai` | 容器时区设置 |
-| `AI_BASE_URL` | - | OpenAI 兼容的 API Base URL（可选，可在前端设置） |
-| `AI_API_KEY` | - | AI 接口密钥（可选，可在前端设置） |
-| `AI_MODEL` | `gpt-4o-mini` | 对话与速记处理模型名称 |
-| `AI_EMBEDDING_MODEL`| `text-embedding-3-small` | 语义检索向量嵌入模型名称 |
+
+> 提示：AI 相关配置（API Key、Base URL、模型参数）统一在 Web 端**「设置」**页面中管理，并自动持久化保存在本地 `notes/.biunote/config.json` 中。
 
 ---
 

@@ -4,5 +4,6 @@ notes
 data
 scratch
 *.tsbuildinfo
+.env
 .DS_Store
 Thumbs.db

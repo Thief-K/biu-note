@@ -1,4 +1,4 @@
-﻿# ⚡ BiuNote
+# ⚡ BiuNote
 
 <div align="center">
 
@@ -34,25 +34,15 @@ Create a directory (e.g. `~/biunote`) on your server and create `docker-compose.
 ```yaml
 services:
   biunote:
-    # Official GHCR image:
     image: ghcr.io/thief-k/biu-note:latest
-    # Mirror proxy for faster downloads in mainland China:
-    # image: ghcr.dockerproxy.net/thief-k/biu-note:latest
     container_name: biunote
     restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
-      - NOTES_DIR=/app/notes
       - LOGIN_TOKEN=your-secret-token     # Set your custom web access token
       - TZ=Asia/Shanghai
-      # Optional: AI Provider Configuration (can also be configured via Web Settings)
-      # - AI_BASE_URL=https://api.openai.com/v1
-      # - AI_API_KEY=sk-xxx
-      # - AI_MODEL=gpt-4o-mini
-      # - AI_EMBEDDING_MODEL=text-embedding-3-small
     volumes:
-      # Persistent storage mount: includes Markdown notes, Git repository, and SQLite DB
       - ./notes:/app/notes
 ```
 
@@ -98,10 +88,8 @@ For unattended automatic updates, add the `watchtower` service to `docker-compos
 | `NOTES_DIR` | `/app/notes` | Notes and metadata storage path |
 | `LOGIN_TOKEN` | `biunote-secret-token` | Web access token (strongly recommended to change in production) |
 | `TZ` | `Asia/Shanghai` | Container timezone |
-| `AI_BASE_URL` | - | OpenAI-compatible API base URL (optional, configurable in Web UI) |
-| `AI_API_KEY` | - | AI API key (optional, configurable in Web UI) |
-| `AI_MODEL` | `gpt-4o-mini` | LLM model name for chat and note processing |
-| `AI_EMBEDDING_MODEL`| `text-embedding-3-small` | Vector embedding model name |
+
+> Note: AI configuration (API key, base URL, models) is managed securely via the Web UI **Settings** page and stored in `notes/.biunote/config.json`.
 
 ---
 

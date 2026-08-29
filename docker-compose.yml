@@ -1,22 +1,13 @@
 services:
   biunote:
-    image: biunote:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/thief-k/biu-note:1.0.0
     container_name: biunote
     restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
-      - NOTES_DIR=/app/notes
       - LOGIN_TOKEN=biunote-secret-token
       - TZ=Asia/Shanghai
-      # 可选：直接通过环境变量注入 AI 配置
-      # - OPENAI_API_KEY=
-      # - OPENAI_BASE_URL=
-      # - OPENAI_MODEL=
-      # - EMBEDDING_MODEL=
     volumes:
-      # 单一持久化挂载点：包含所有 Markdown 笔记（含独立Git版本库）、SQLite 数据库与向量缓存（位于 .biunote/）
       - ./notes:/app/notes
+
