@@ -11,6 +11,7 @@ import SearchFilterBar from '../components/common/SearchFilterBar';
 import EmptyState from '../components/common/EmptyState';
 import { TagList } from '../components/common/TagBadge';
 import IconButton from '../components/common/IconButton';
+import PullToRefresh from '../components/common/PullToRefresh';
 import type { NoteItem } from '../types';
 
 export default function NotesPage() {
@@ -137,8 +138,12 @@ export default function NotesPage() {
         )}
       </PageHeader>
 
-      {/* 2. Scrollable Notes Cards List */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-4 pb-32">
+      {/* 2. Scrollable Notes Cards List with Pull-to-Refresh */}
+      <PullToRefresh
+        onRefresh={fetchNotes}
+        accentColor="blue"
+        className="flex-1 px-4 md:px-8 py-4 pb-32"
+      >
         <div className="max-w-3xl mx-auto flex flex-col gap-3">
           {filteredNotes.length === 0 ? (
             <EmptyState icon={FileText} title={t('notes.empty')} />
@@ -184,7 +189,7 @@ export default function NotesPage() {
             })
           )}
         </div>
-      </div>
+      </PullToRefresh>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import PageHeader from '../components/common/PageHeader';
 import SearchFilterBar from '../components/common/SearchFilterBar';
 import EmptyState from '../components/common/EmptyState';
 import IconButton from '../components/common/IconButton';
+import PullToRefresh from '../components/common/PullToRefresh';
 import { TagList } from '../components/common/TagBadge';
 import type { SparkItem } from '../types';
 
@@ -100,8 +101,12 @@ export default function SparksPage() {
         )}
       </PageHeader>
 
-      {/* 2. Scrollable Stream Container */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-4 pb-32">
+      {/* 2. Scrollable Stream Container with Pull-to-Refresh */}
+      <PullToRefresh
+        onRefresh={fetchNotes}
+        accentColor="amber"
+        className="flex-1 px-4 md:px-8 py-4 pb-32"
+      >
         <div className="max-w-3xl mx-auto flex flex-col gap-3">
           {/* Sparks Cards List */}
           {filteredSparks.length === 0 ? (
@@ -148,7 +153,7 @@ export default function SparksPage() {
             ))
           )}
         </div>
-      </div>
+      </PullToRefresh>
     </div>
   );
 }
