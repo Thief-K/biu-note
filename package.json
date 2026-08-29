@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "Pure Markdown Note-Taking App with Integrated AI Copilot",
+  "license": "MIT",
   "scripts": {
     "dev": "concurrently \"pnpm --filter biunote-backend dev\" \"pnpm --filter biunote-frontend dev\"",
     "test": "vitest run",
