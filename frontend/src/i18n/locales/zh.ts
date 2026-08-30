@@ -16,7 +16,7 @@ export default {
     tip: '提示',
     dangerTip: '危险操作提示',
     copySuccess: '已复制到剪贴板',
-    aiMemo: 'AI 极速速记',
+    aiMemo: 'AI 速记',
     inputOrPaste: '输入或粘贴任何凌乱内容、会议速记、网页片段...',
     optionalInstruction: '可选微指令：如“扩写为教程”、“提取行动项”'
   },
@@ -41,8 +41,8 @@ export default {
     deleteConfirm: '确定删除这条灵感吗？'
   },
   chat: {
-    title: '笔记 AI 助手',
-    welcome: '随时问我任何关于笔记的内容...',
+    title: 'AI 助手',
+    welcome: '你好呀，有什么想问的？',
     placeholder: '输入关于你笔记的问题...',
     thinking: '正在思考并检索笔记内容...',
     error: 'AI 回答生成失败，请检查设置。',
@@ -55,7 +55,7 @@ export default {
     outline: '大纲目录',
     noHeadings: '当前笔记暂无大纲标题',
     aiModify: 'AI 修改',
-    aiDraft: 'AI 智能起草',
+    aiDraft: 'AI 起草',
     aiPromptPlaceholder: '告诉 AI 你想如何优化这篇笔记...',
     aiDraftPlaceholder: '告诉 AI 你想起草什么主题的笔记...',
     presetPolish: '润色文字',
@@ -70,7 +70,7 @@ export default {
   },
   diff: {
     mergeTitle: 'AI 建议合并',
-    newTitle: 'AI 智能起草',
+    newTitle: 'AI 起草',
     targetFile: '合并至 {file}',
     createFlat: '创建全新独立笔记',
     original: '原始内容',

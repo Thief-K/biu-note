@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Save, Check, ListTree, Wand2, ArrowLeft, Eye, Edit3 } from 'lucide-react';
+import { Save, Check, ListTree, Wand2, Eye, Edit3, FileText } from 'lucide-react';
 import { marked } from 'marked';
 import { useNotesStore } from '../../stores/notesStore';
 import { useModalStore } from '../../stores/modalStore';
@@ -12,6 +12,8 @@ import MarkdownViewer from '../common/MarkdownViewer';
 import { TagList } from '../common/TagBadge';
 import AlertBanner from '../common/AlertBanner';
 import IconButton from '../common/IconButton';
+import PageHeader from '../common/PageHeader';
+import ContentContainer from '../common/ContentContainer';
 import type { HeadingItem, NoteItem } from '../../types';
 
 // Extracts title from first markdown heading or plain line
@@ -320,66 +322,62 @@ export default function LiveMarkdownEditor({
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-zinc-950 text-zinc-100 relative">
       {/* 📍 1. Sticky Glass Top Navigation Bar */}
-      <div className="sticky top-0 z-30 flex items-center justify-between px-4 md:px-8 py-3 bg-zinc-950/80 backdrop-blur-md border-b border-zinc-855/50">
-        {/* Left: Back button with dirty confirmation guard */}
-        <IconButton
-          icon={ArrowLeft}
-          size="md"
-          shape="rounded-full"
-          className="text-zinc-400 hover:text-zinc-100 hover:scale-105"
-          onClick={handleBack}
-        />
-
-        {/* Right: Save & Tool Capsules */}
-        <div className="flex items-center gap-2">
-          {/* Toggle Preview Button (VS Code style single pane toggle) */}
-          <IconButton
-            icon={isPreview ? Edit3 : Eye}
-            size="md"
-            shape="rounded-full"
-            variant={isPreview ? 'blue' : 'default'}
-            onClick={togglePreview}
-          />
-
-          {/* Save Button with Unsaved Dirty State Indicator: Only displayed in Edit mode */}
-          {!isPreview && (
-            <div className="relative">
-              <IconButton
-                icon={savedSuccess ? Check : Save}
-                loading={saving}
-                disabled={saving || !canSave}
-                size="md"
-                shape="rounded-full"
-                variant={savedSuccess ? 'emerald' : canSave ? 'amber' : 'default'}
-                onClick={handleSave}
-              />
-              {isDirty && (
-                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-400 animate-ping pointer-events-none" />
-              )}
-            </div>
-          )}
-
-          {/* Outline TOC toggle: Only displayed in Preview mode when headings exist */}
-          {isPreview && headings.length > 0 && (
+      <PageHeader
+        onBack={handleBack}
+        icon={FileText}
+        iconClassName="bg-blue-500/10 border-blue-500/20 text-blue-400"
+        title={isNew ? t('notes.newTitle') : (initialNote?.filepath?.replace(/\.md$/, '') || filepath.replace(/\.md$/, '') || t('notes.title'))}
+        actions={
+          <>
+            {/* Toggle Preview Button (VS Code style single pane toggle) */}
             <IconButton
-              icon={ListTree}
+              icon={isPreview ? Edit3 : Eye}
               size="md"
               shape="rounded-full"
-              variant={isOutlineOpen ? 'emerald' : 'default'}
-              onClick={() => setIsOutlineOpen((prev) => !prev)}
+              variant="blue"
+              onClick={togglePreview}
             />
-          )}
 
-          {/* AI Assistant Drawer toggle */}
-          <IconButton
-            icon={Wand2}
-            size="md"
-            shape="rounded-full"
-            variant={isAiDrawerOpen ? 'emerald' : 'default'}
-            onClick={() => setIsAiDrawerOpen((prev) => !prev)}
-          />
-        </div>
-      </div>
+            {/* Save Button with Unsaved Dirty State Indicator: Only displayed in Edit mode */}
+            {!isPreview && (
+              <div className="relative">
+                <IconButton
+                  icon={savedSuccess ? Check : Save}
+                  loading={saving}
+                  disabled={saving || !canSave}
+                  size="md"
+                  shape="rounded-full"
+                  variant={savedSuccess ? 'emerald' : canSave ? 'amber' : 'default'}
+                  onClick={handleSave}
+                />
+                {isDirty && (
+                  <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-400 animate-ping pointer-events-none" />
+                )}
+              </div>
+            )}
+
+            {/* AI Assistant Drawer toggle */}
+            <IconButton
+              icon={Wand2}
+              size="md"
+              shape="rounded-full"
+              variant="emerald"
+              onClick={() => setIsAiDrawerOpen((prev) => !prev)}
+            />
+
+            {/* Outline TOC toggle: Only displayed in Preview mode when headings exist */}
+            {isPreview && headings.length > 0 && (
+              <IconButton
+                icon={ListTree}
+                size="md"
+                shape="rounded-full"
+                variant={isOutlineOpen ? 'emerald' : 'default'}
+                onClick={() => setIsOutlineOpen((prev) => !prev)}
+              />
+            )}
+          </>
+        }
+      />
 
       {/* 📝 2. Dominant Centered Canvas (Switch between Live Textarea and MarkdownViewer) */}
       <div
@@ -389,7 +387,7 @@ export default function LiveMarkdownEditor({
           if (!isPreview) textareaRef.current?.focus();
         }}
       >
-        <div className="max-w-3xl mx-auto flex flex-col min-h-full">
+        <ContentContainer className="min-h-full">
           {editorError && (
             <div className="mb-4">
               <AlertBanner variant="error" message={editorError} />
@@ -445,7 +443,7 @@ export default function LiveMarkdownEditor({
               />
             </>
           )}
-        </div>
+        </ContentContainer>
       </div>
 
       {/* 📑 3. Slide-over Outline TOC Drawer */}

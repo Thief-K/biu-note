@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ListTree, Wand2 } from 'lucide-react';
+import { ListTree, Wand2, FileText } from 'lucide-react';
 import { marked } from 'marked';
 import { useModalStore } from '../../stores/modalStore';
 import { apiFetch } from '../../utils/api';
@@ -10,6 +10,8 @@ import OutlineDrawer from '../common/OutlineDrawer';
 import AiModifyDrawer from '../common/AiModifyDrawer';
 import { TagList } from '../common/TagBadge';
 import IconButton from '../common/IconButton';
+import PageHeader from '../common/PageHeader';
+import ContentContainer from '../common/ContentContainer';
 import type { HeadingItem, NoteItem } from '../../types';
 
 export interface NoteReaderProps {
@@ -100,43 +102,39 @@ export default function NoteReader({ note }: NoteReaderProps) {
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-zinc-950 text-zinc-100 relative">
       {/* 📍 1. Sticky Glass Top Navigation Bar */}
-      <div className="sticky top-0 z-30 flex items-center justify-between px-4 md:px-8 py-3 bg-zinc-950/80 backdrop-blur-md border-b border-zinc-850/50">
-        {/* Left: Back button */}
-        <IconButton
-          icon={ArrowLeft}
-          size="md"
-          shape="rounded-full"
-          className="text-zinc-400 hover:text-zinc-100 hover:scale-105"
-          onClick={() => navigate('/notes')}
-        />
-
-        {/* Right: Tool Capsules */}
-        <div className="flex items-center gap-2">
-          {/* Outline TOC toggle: Only displayed when headings exist */}
-          {headings.length > 0 && (
+      <PageHeader
+        onBack={() => navigate('/notes')}
+        icon={FileText}
+        iconClassName="bg-blue-500/10 border-blue-500/20 text-blue-400"
+        title={note?.filepath?.replace(/\.md$/, '') || t('notes.title')}
+        actions={
+          <>
+            {/* AI Assistant Modify button */}
             <IconButton
-              icon={ListTree}
+              icon={Wand2}
               size="md"
               shape="rounded-full"
-              variant={isOutlineOpen ? 'emerald' : 'default'}
-              onClick={() => setIsOutlineOpen((prev) => !prev)}
+              variant="emerald"
+              onClick={() => setIsAiDrawerOpen((prev) => !prev)}
             />
-          )}
 
-          {/* AI Assistant Modify button */}
-          <IconButton
-            icon={Wand2}
-            size="md"
-            shape="rounded-full"
-            variant={isAiDrawerOpen ? 'emerald' : 'default'}
-            onClick={() => setIsAiDrawerOpen((prev) => !prev)}
-          />
-        </div>
-      </div>
+            {/* Outline TOC toggle: Only displayed when headings exist */}
+            {headings.length > 0 && (
+              <IconButton
+                icon={ListTree}
+                size="md"
+                shape="rounded-full"
+                variant={isOutlineOpen ? 'emerald' : 'default'}
+                onClick={() => setIsOutlineOpen((prev) => !prev)}
+              />
+            )}
+          </>
+        }
+      />
 
       {/* 📖 2. Pure Reader Scroll Container */}
       <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 select-none scroll-smooth">
-        <div className="max-w-3xl mx-auto flex flex-col min-h-full pb-16">
+        <ContentContainer className="min-h-full pb-16">
           {/* Tags Display in Reader Mode */}
           {Array.isArray(note?.tags) && note.tags.length > 0 && (
             <div className="mb-2.5 flex flex-wrap items-center gap-1.5 select-none">
@@ -152,7 +150,7 @@ export default function NoteReader({ note }: NoteReaderProps) {
               {t('editor.emptyPreview')}
             </div>
           )}
-        </div>
+        </ContentContainer>
       </div>
 
       {/* 📑 3. Slide-over Outline TOC Drawer */}

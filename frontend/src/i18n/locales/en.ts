@@ -16,7 +16,7 @@ export default {
     tip: 'Notice',
     dangerTip: 'Danger Action Warning',
     copySuccess: 'Copied to clipboard',
-    aiMemo: 'AI Fast Capture',
+    aiMemo: 'AI Memo',
     inputOrPaste: 'Type or paste messy notes, meeting minutes, web clips...',
     optionalInstruction: 'Optional micro-instruction: e.g. "Draft tutorial", "Extract action items"'
   },
@@ -41,8 +41,8 @@ export default {
     deleteConfirm: 'Delete this spark?'
   },
   chat: {
-    title: 'Note AI Assistant',
-    welcome: 'Ask me anything about your notes...',
+    title: 'AI Assistant',
+    welcome: 'Hello there, what would you like to ask?',
     placeholder: 'Ask questions about your notes...',
     thinking: 'Thinking and retrieving from notes...',
     error: 'Failed to generate AI response. Please check settings.',
