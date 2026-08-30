@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2026-08-30
+
+### ⚡ Performance
+- **Frontend Bundle Reduction**: Configured `highlight.js` with on-demand registration for common developer languages, slashing frontend JS bundle size from **1.31 MB down to 514 KB** (Gzip: 160 KB, **-61% reduction**).
+- **Vite SSR Backend Build**: Unified backend production build with `vite build --ssr`, outputting a 35KB standalone `dist/server.js` with zero runtime compilation overhead.
+
+### ♻️ Refactor
+- **Vite-Powered Development & Build Pipeline**: Standardized backend execution on Vite's official SSR module runner, enabling clean extensionless imports without requiring `.ts` suffixes or third-party wrappers (`tsx` / `vite-node`).
+- **Watch Path Isolation**: Configured targeted `--watch-path` for backend development to avoid infinite restart loops triggered by local SQLite database file updates.
+- **Dependency Upgrades**: Upgraded `highlight.js` to `^11.12.0`, `fastify` to `v5`, `vite` to `v8`, and `zustand` to `v5`.
+
+### 🔄 Changed
+- **Note Editor Layout Standardization**: Unified note editor and reader navigation using standard `PageHeader` and `ContentContainer` components.
+- **Action Button Styling**: Configured persistent semantic color variants for Preview (`blue`) and AI (`emerald`) action buttons.
+- **Streamlined UI Copywriting**: Refined AI prompts and action labels ("AI 起草", "AI 速记", "AI 助手", and "你好呀，有什么想问的？").
+
+### 🐛 Fixed
+- **Mobile Text Selection Isolation**: Constrained CSS text selection boundaries to prevent mobile long-press gestures from selecting the entire page layout.
+
 ---
 
 ## [1.0.3] - 2026-08-30
@@ -69,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Docker & CI/CD**: Production `Dockerfile` and automated multi-arch GHCR publishing pipeline.
 - **License**: Released under standard MIT License.
 
+[1.0.4]: https://github.com/Thief-K/biu-note/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/Thief-K/biu-note/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/Thief-K/biu-note/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/Thief-K/biu-note/compare/v1.0.0...v1.0.1
