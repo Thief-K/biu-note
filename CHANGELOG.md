@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] - 2026-08-30
+
+### 🐛 Fixed
+- **SPA Direct Access & Route Refresh (404 Resolution)**: Resolved 404 Not Found error when directly accessing or refreshing frontend SPA routes (`/sparks`, `/notes`, `/chat`, `/settings`) by standardizing production path resolution relative to `process.cwd()`.
+
+### ♻️ Refactor
+- **Standard Monorepo Deployment Conventions**: Aligned Docker container runtime structure with standard production conventions (`backend/dist/server.js` and `frontend/dist/`).
+
+---
+
 ## [1.0.4] - 2026-08-30
 
 ### ⚡ Performance
@@ -88,6 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Docker & CI/CD**: Production `Dockerfile` and automated multi-arch GHCR publishing pipeline.
 - **License**: Released under standard MIT License.
 
+[1.0.5]: https://github.com/Thief-K/biu-note/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/Thief-K/biu-note/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/Thief-K/biu-note/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/Thief-K/biu-note/compare/v1.0.1...v1.0.2
