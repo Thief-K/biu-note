@@ -10,7 +10,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   token: typeof localStorage !== 'undefined' ? localStorage.getItem('biunote_token') : null,
   setToken: (token: string | null) => {
     if (typeof localStorage !== 'undefined') {
-      token ? localStorage.setItem('biunote_token', token) : localStorage.removeItem('biunote_token');
+      if (token) {
+        localStorage.setItem('biunote_token', token);
+      } else {
+        localStorage.removeItem('biunote_token');
+      }
     }
     set({ token });
   },
