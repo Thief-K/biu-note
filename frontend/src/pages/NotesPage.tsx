@@ -156,7 +156,7 @@ export default function NotesPage() {
                 <div
                   key={note.filepath}
                   onClick={() => navigate(`/notes/${encodeURIComponent(note.filepath)}`)}
-                  className="px-4 py-3 rounded-2xl bg-zinc-900 border border-blue-500/35 hover:border-blue-500/70 flex flex-col gap-2 transition-all cursor-pointer group"
+                  className="px-4 py-3 rounded-2xl bg-zinc-900 border border-blue-500/35 hover:border-blue-500/70 flex flex-col gap-2 transition-all cursor-pointer group select-none"
                 >
                   {/* Title */}
                   <div className="flex items-center justify-between min-w-0">

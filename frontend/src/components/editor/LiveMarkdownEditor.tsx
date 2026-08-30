@@ -384,7 +384,7 @@ export default function LiveMarkdownEditor({
       {/* 📝 2. Dominant Centered Canvas (Switch between Live Textarea and MarkdownViewer) */}
       <div
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto px-4 md:px-8 py-6 select-text scroll-smooth"
+        className="flex-1 overflow-y-auto px-4 md:px-8 py-6 select-none scroll-smooth"
         onClick={() => {
           if (!isPreview) textareaRef.current?.focus();
         }}

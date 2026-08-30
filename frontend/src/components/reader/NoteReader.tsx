@@ -135,7 +135,7 @@ export default function NoteReader({ note }: NoteReaderProps) {
       </div>
 
       {/* 📖 2. Pure Reader Scroll Container */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 select-text scroll-smooth">
+      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 select-none scroll-smooth">
         <div className="max-w-3xl mx-auto flex flex-col min-h-full pb-16">
           {/* Tags Display in Reader Mode */}
           {Array.isArray(note?.tags) && note.tags.length > 0 && (

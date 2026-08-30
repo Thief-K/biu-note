@@ -116,7 +116,7 @@ export default function SparksPage() {
             filteredSparks.map((spark) => (
               <div
                 key={spark.filepath}
-                className="px-4 py-3 rounded-2xl bg-zinc-900 border border-amber-500/35 hover:border-amber-500/70 flex flex-col gap-2 transition-all group"
+                className="px-4 py-3 rounded-2xl bg-zinc-900 border border-amber-500/35 hover:border-amber-500/70 flex flex-col gap-2 transition-all group select-none"
               >
                 {/* Content */}
                 <p className="text-[13px] md:text-sm text-zinc-100 leading-relaxed whitespace-pre-wrap select-text font-normal">
