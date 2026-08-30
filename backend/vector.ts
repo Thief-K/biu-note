@@ -8,7 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Resolve notes and .biunote directory
 const getBiunoteDir = (): string => {
   const rawNotesDir = process.env.NOTES_DIR || (process.env.DATA_DIR ? path.join(process.env.DATA_DIR, 'notes') : '../notes');
-  const notesDir = path.isAbsolute(rawNotesDir) ? rawNotesDir : path.resolve(__dirname, rawNotesDir);
+  const notesDir = path.isAbsolute(rawNotesDir) ? rawNotesDir : path.resolve(process.cwd(), rawNotesDir);
   const biunoteDir = path.join(notesDir, '.biunote');
   if (!fs.existsSync(biunoteDir)) {
     fs.mkdirSync(biunoteDir, { recursive: true });

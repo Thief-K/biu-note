@@ -43,7 +43,7 @@ const LOGIN_TOKEN = process.env.LOGIN_TOKEN || 'biunote-secret-token';
 // Resolve NOTES_DIR absolutely (fallback to DATA_DIR/notes if DATA_DIR is set, else ../notes)
 const rawNotesDir =
   process.env.NOTES_DIR || (process.env.DATA_DIR ? path.join(process.env.DATA_DIR, 'notes') : '../notes');
-const notesDir = path.isAbsolute(rawNotesDir) ? rawNotesDir : path.resolve(__dirname, rawNotesDir);
+const notesDir = path.isAbsolute(rawNotesDir) ? rawNotesDir : path.resolve(process.cwd(), rawNotesDir);
 
 if (!fs.existsSync(notesDir)) {
   fs.mkdirSync(notesDir, { recursive: true });
@@ -857,7 +857,7 @@ ${contextText || 'No context matches. The user has not created relevant notes ye
 );
 
 // 6. Serve React App static files in production / build
-const clientBuildPath = path.join(__dirname, '../frontend/dist');
+const clientBuildPath = process.env.CLIENT_DIR || path.resolve(process.cwd(), '../frontend/dist');
 if (fs.existsSync(clientBuildPath)) {
   console.log('Serving frontend static files from:', clientBuildPath);
   await server.register(fastifyStatic, {

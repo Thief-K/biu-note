@@ -8,7 +8,7 @@ const __dirname = import.meta.dirname;
 // Resolve notes directory (supports NOTES_DIR or DATA_DIR/notes env vars)
 const getNotesDir = (): string => {
   const rawNotesDir = process.env.NOTES_DIR || (process.env.DATA_DIR ? path.join(process.env.DATA_DIR, 'notes') : '../notes');
-  return path.isAbsolute(rawNotesDir) ? rawNotesDir : path.resolve(__dirname, rawNotesDir);
+  return path.isAbsolute(rawNotesDir) ? rawNotesDir : path.resolve(process.cwd(), rawNotesDir);
 };
 
 interface PreparedStatements {
