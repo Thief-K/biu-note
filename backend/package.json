@@ -2,10 +2,11 @@
   "name": "biunote-backend",
   "version": "1.0.3",
   "type": "module",
-  "main": "server.ts",
+  "main": "dist/server.js",
   "scripts": {
-    "dev": "node --watch server.ts",
-    "start": "node server.ts",
+    "dev": "node --watch-path=server.ts --watch-path=lib --watch-path=types --watch-path=db.ts --watch-path=git.ts --watch-path=vector.ts dev.js",
+    "build": "vite build",
+    "start": "node dist/server.js",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -18,7 +19,8 @@
   },
   "devDependencies": {
     "@types/node": "^22.13.0",
-    "typescript": "7.0.2"
+    "typescript": "7.0.2",
+    "vite": "^8.2.2"
   },
   "engines": {
     "node": ">=22.0.0"

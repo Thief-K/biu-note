@@ -13,12 +13,13 @@ COPY frontend/package.json frontend/tsconfig.json ./frontend/
 COPY backend/package.json backend/tsconfig.json ./backend/
 RUN pnpm install --offline --frozen-lockfile
 
-# Layer C: Build frontend production bundle
+# Layer C: Build frontend & backend production bundles with Vite
 COPY frontend/ ./frontend/
+COPY backend/ ./backend/
 RUN pnpm --filter biunote-frontend build
+RUN pnpm --filter biunote-backend build
 
 # Layer D: Deploy isolated backend production dependencies (clean, lightweight)
-COPY backend/ ./backend/
 RUN pnpm --filter biunote-backend deploy --prod /app/deployed-backend
 
 # 2. Production Runner Stage
@@ -34,12 +35,9 @@ COPY --from=builder /app/deployed-backend/node_modules /app/backend/node_modules
 # Copy frontend static build artifacts (~1.3MB layer)
 COPY --from=builder /app/frontend/dist /app/frontend/dist
 
-# Copy backend application source and configs (<200KB layer)
-COPY --from=builder /app/backend/package.json /app/backend/tsconfig.json /app/backend/
-COPY --from=builder /app/backend/server.ts /app/backend/
-COPY --from=builder /app/backend/lib/ /app/backend/lib/
-COPY --from=builder /app/backend/types/ /app/backend/types/
-COPY --from=builder /app/backend/db.ts /app/backend/git.ts /app/backend/vector.ts /app/backend/
+# Copy backend bundled server (<40KB layer)
+COPY --from=builder /app/backend/package.json /app/backend/
+COPY --from=builder /app/backend/dist /app/backend/dist
 
 RUN mkdir -p /app/notes
 
@@ -54,4 +52,4 @@ VOLUME ["/app/notes"]
 EXPOSE 3000
 
 WORKDIR /app/backend
-CMD ["npx", "tsx", "server.ts"]
+CMD ["node", "dist/server.js"]
