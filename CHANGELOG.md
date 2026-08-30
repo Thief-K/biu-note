@@ -1,4 +1,4 @@
-# Changelog (更新日志)
+# Changelog
 
 All notable changes to this project will be documented in this file.
 
@@ -9,54 +9,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.3] - 2026-08-30
 
-### Performance
+### ⚡ Performance
 - **Docker Layer Caching & Incremental Pull Optimization**:
   - Integrated `pnpm fetch` to strictly cache dependencies based on `pnpm-lock.yaml`, preventing routine version bumps in `package.json` from invalidating the layer cache.
   - Employed `pnpm deploy --prod` to isolate backend runtime dependencies, eliminating ~40MB of devDependencies from the production image and reducing routine update pulls to ~1.5MB.
 
-### Fixed
+### 🐛 Fixed
 - **Backend Type Definition**: Added `original_content` optional property to `AiProcessResponse` in backend types to ensure 100% strict TypeScript compilation.
 
 ---
 
 ## [1.0.2] - 2026-08-30
 
-### Added
+### ✨ Added
 - **Proportional Synchronized Dual-Pane Scrolling**: Robust synchronized scroll tracking with proportional height percentage alignment across original and proposed diff panes in `DiffModal`.
 - **Responsive Mobile Segmented View**: Dedicated segmented tab switcher (`Proposed` vs `Original`) for small screens in AI Diff modal.
 - **Interactive Tag Creation Capsule**: Native inline tag creation and deletion directly inside the reusable `TagList` component.
 
-### Changed
+### 🔄 Changed
 - **Streamlined Diff Modal UI & Icons**: Refined modal title (`AI Merge`), concise column headers (`Original` vs `Proposed`), and symmetrical icon styling (`FileText` for note title, `Tag` for tag capsules).
 - **Design Token Standardization**: Replaced manual overriding CSS color classes with standard `IconButton` variant tokens (`emerald`, `blue`, `amber`, `default`).
 
-### Fixed
+### 🐛 Fixed
 - **AI Document Transformation on Existing Notes**: Fixed `/api/ai/process` prompt to properly recognize summary, polishing, and expansion instructions on existing notes, and ensured `original_content` is always returned.
 - **Defensive Diff Calculation**: Added optional-chaining and fallback guards to avoid runtime exceptions during diff calculations.
 
-### Refactor
+### ♻️ Refactor
 - **Code Shrink & Deduplication**: Unified duplicate JSX diff renderers, module-scoped `diff_match_patch` singleton, centralized tag input logic, and removed orphan development scripts.
 
 ---
 
 ## [1.0.1] - 2026-08-29
 
-### Added
+### ✨ Added
 - **UI Layout Consistency**: Extracted reusable `ContentContainer` component to standardize content widths (`w-full max-w-3xl mx-auto`) across Notes, Sparks, and Settings pages.
 
-### Changed
+### 🔄 Changed
 - **Editor Styling & Interaction**:
   - Enhanced button color accents across the editor and top navigation bar (Emerald for AI, Blue for Preview, Amber for unsaved changes, Emerald capsule for tags).
   - Streamlined editor header by hiding Outline TOC button during edit mode and hiding Save button in preview mode.
 
-### Performance
+### ⚡ Performance
 - **Docker Layer Caching**: Optimized `Dockerfile` multi-stage layer copy order to drastically reduce incremental update pull size (from ~58MB down to <2MB for routine code edits).
 
 ---
 
 ## [1.0.0] - 2026-08-29
 
-### Added
+### ✨ Added
 - **Pure Markdown Note Engine**: 100% pure plaintext Markdown note-taking with local-first file storage.
 - **Instant Sparks Stream**: Fast fleeting thoughts capture stream with full-text search.
 - **Integrated AI Copilot**:

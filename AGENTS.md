@@ -133,7 +133,7 @@ When instructed to **"Bump to v[x.x.x]"**, **"Release v[x.x.x]"**, or **"更新�
 
 2. **Update Changelog (`CHANGELOG.md`)**:
    - Follow Keep a Changelog 1.1.0 specifications and insert `## [x.x.x] - YYYY-MM-DD` at the top of `CHANGELOG.md`;
-   - Categorize changes systematically (`### Added`, `### Changed`, `### Fixed`, `### Performance`, etc.);
+   - Categorize changes systematically with standard emoji prefixes (`### ✨ Added`, `### 🔄 Changed`, `### 🐛 Fixed`, `### ⚡ Performance`, `### ♻️ Refactor`, etc.);
    - Update version comparison link references at the bottom (e.g., `[x.x.x]: https://github.com/Thief-K/biu-note/compare/v<prev>...vx.x.x`).
 
 3. **Execute Comprehensive Automated Verification**:
