@@ -15,6 +15,7 @@ export interface QuickModalProps {
   canSubmit?: boolean;
   confirmIcon?: ComponentType<{ size?: number | string; className?: string }>;
   accentColor?: 'amber' | 'emerald' | string;
+  leftAction?: ReactNode;
   children?: ReactNode;
 }
 
@@ -33,6 +34,7 @@ export default function QuickModal({
   canSubmit = true,
   confirmIcon: ConfirmIcon = Check,
   accentColor = 'amber',
+  leftAction,
   children
 }: QuickModalProps) {
   if (!isOpen) return null;
@@ -86,9 +88,14 @@ export default function QuickModal({
 
           {/* Action Footer with rounded-full micro-capsule buttons */}
           <div className="flex items-center justify-between pt-0.5">
-            <span className="text-[11px] text-zinc-500 font-mono">
-              {charCount > 0 && `${charCount} 字`}
-            </span>
+            <div className="flex items-center gap-2">
+              {leftAction}
+              {charCount > 0 && (
+                <span className="text-[11px] text-zinc-500 font-mono">
+                  {`${charCount} 字`}
+                </span>
+              )}
+            </div>
 
             <div className="flex items-center gap-2">
               {/* Cancel Button */}

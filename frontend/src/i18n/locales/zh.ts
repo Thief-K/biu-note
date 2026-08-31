@@ -38,7 +38,12 @@ export default {
     inputPlaceholder: '记录瞬间的想法、闪念、待办...',
     searchPlaceholder: '搜索灵感流...',
     empty: '暂无灵感记录，随时记录你的第一个灵感',
-    deleteConfirm: '确定删除这条灵感吗？'
+    deleteConfirm: '确定删除这条灵感吗？',
+    listening: '正在倾听中...',
+    voiceInput: '语音输入',
+    stopVoiceInput: '停止听写',
+    micPermissionDenied: '麦克风权限被拒绝',
+    speechNotSupported: '当前浏览器不支持语音识别'
   },
   chat: {
     title: 'AI 助手',

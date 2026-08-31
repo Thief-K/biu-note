@@ -38,7 +38,12 @@ export default {
     inputPlaceholder: 'Capture quick ideas, thoughts, todos...',
     searchPlaceholder: 'Search sparks stream...',
     empty: 'No sparks yet. Capture your first spark anytime.',
-    deleteConfirm: 'Delete this spark?'
+    deleteConfirm: 'Delete this spark?',
+    listening: 'Listening...',
+    voiceInput: 'Voice Input',
+    stopVoiceInput: 'Stop Listening',
+    micPermissionDenied: 'Microphone permission denied',
+    speechNotSupported: 'Speech recognition not supported in this browser'
   },
   chat: {
     title: 'AI Assistant',
