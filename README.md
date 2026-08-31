@@ -15,6 +15,7 @@
 - 📝 **100% Pure Markdown**: Physical `.md` files remain pure plaintext with zero metadata pollution (tags decoupled in SQLite) and full local file ownership.
 - ⚡ **AI Fast Drafting & Smart Capture**: Turn raw thoughts or prompts into polished notes. AI intelligently merges into existing Markdown notes or drafts new ones with interactive **Visual Diff Confirmation**.
 - 💡 **Instant Sparks Stream**: Millisecond-level ephemeral capture for quick thoughts, seamlessly organized without disrupting your writing flow.
+- 🎙️ **Native Voice Dictation (Voice-to-Sparks)**: Client-side speech-to-text powered by browser Web Speech API with zero Token cost and zero dependencies; live streaming dictation into instant sparks.
 - 👓 **Single-Pane Preview & AST Outline**: VS Code style instant preview toggle (`Ctrl+P`), auto-focus on note creation, save-to-preview transition, and AST-synced heading TOC (H1~H3) with smooth scrolling.
 - 🤖 **Context-Aware Multi-Doc RAG Chat**: Ask questions across your Markdown notes or `@mention` specific documents with auto-resizing input and clean citation references.
 - 🌐 **Multi-Language (i18n)**: Native lightweight internationalization supporting **English** and **简体中文** with instant switching and auto-persistence.

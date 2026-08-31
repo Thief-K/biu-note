@@ -73,7 +73,7 @@ flowchart TD
 | **`TagBadge` & `TagList`** | Emerald capsule badges for tags with optional remove button. |
 | **`MarkdownViewer`** | Shared high-fidelity Markdown renderer with `marked` renderer-level synchronous syntax highlighting (`highlight.js`) and static copy button markup. 100% shared across mobile reader and PC preview. |
 | **`EmptyState`** | Standard placeholder when a collection is empty. |
-| **`QuickModal`** | Fast capture & sparks modal (`Ctrl + Enter`) featuring dynamic submit button highlighting based on input state. |
+| **`QuickModal`** | Fast capture & sparks modal (`Ctrl + Enter`) featuring dynamic submit button highlighting and optional `leftAction` slot (e.g. `VoiceInput` button). |
 | **`OutlineDrawer`** | Slide-over table of contents drawer for Reader and Editor. Filtered strictly to H1~H3 with clean minimal indentation hierarchy. |
 | **`AiModifyDrawer`** | Slide-over AI instruction drawer with preset chips, draft mode detection for empty notes, and reactive submit button. |
 
