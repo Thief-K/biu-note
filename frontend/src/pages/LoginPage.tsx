@@ -35,7 +35,7 @@ export default function LoginPage() {
 
       const data = (await response.json()) as { token: string };
       setToken(data.token);
-      navigate("/sparks");
+      navigate("/notes");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       setError(msg);

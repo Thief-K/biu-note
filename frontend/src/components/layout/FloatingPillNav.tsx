@@ -11,21 +11,7 @@ export default function FloatingPillNav() {
       aria-label="Application Navigation"
     >
       <div className="bg-zinc-900 border border-zinc-700/80 rounded-full p-1.5 flex items-center gap-1.5">
-        {/* 1. Sparks Tab (Amber / Yellow) */}
-        <NavLink
-          to="/sparks"
-          className={({ isActive }) =>
-            `w-10 h-10 rounded-full grid place-items-center shrink-0 transition-all cursor-pointer border ${
-              isActive
-                ? "bg-amber-500/20 text-amber-500 dark:text-amber-400 border-amber-500/60"
-                : "text-zinc-400 border-transparent hover:text-amber-500 dark:hover:text-amber-400 hover:bg-zinc-850"
-            }`
-          }
-        >
-          <Lightbulb size={20} className="w-5 h-5 shrink-0 block m-auto" />
-        </NavLink>
-
-        {/* 2. Notes Tab (Blue / Sky) */}
+        {/* 1. Notes Tab (Blue / Sky) */}
         <NavLink
           to="/notes"
           className={({ isActive }) =>
@@ -37,6 +23,20 @@ export default function FloatingPillNav() {
           }
         >
           <FileText size={20} className="w-5 h-5 shrink-0 block m-auto" />
+        </NavLink>
+
+        {/* 2. Sparks Tab (Amber / Yellow) */}
+        <NavLink
+          to="/sparks"
+          className={({ isActive }) =>
+            `w-10 h-10 rounded-full grid place-items-center shrink-0 transition-all cursor-pointer border ${
+              isActive
+                ? "bg-amber-500/20 text-amber-500 dark:text-amber-400 border-amber-500/60"
+                : "text-zinc-400 border-transparent hover:text-amber-500 dark:hover:text-amber-400 hover:bg-zinc-850"
+            }`
+          }
+        >
+          <Lightbulb size={20} className="w-5 h-5 shrink-0 block m-auto" />
         </NavLink>
 
         {/* 3. Quick Action Central Lightning Button (Emerald Accent FAB - AI Quick Memo) */}

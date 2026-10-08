@@ -23,7 +23,7 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
 function PublicRoute({ children }: { children: ReactNode }) {
   const token = useAuthStore((s) => s.token);
   if (token) {
-    return <Navigate to="/sparks" replace />;
+    return <Navigate to="/notes" replace />;
   }
   return <>{children}</>;
 }
@@ -47,7 +47,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/sparks" replace />,
+        element: <Navigate to="/notes" replace />,
       },
       {
         path: "sparks",

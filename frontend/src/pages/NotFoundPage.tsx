@@ -16,7 +16,7 @@ export default function NotFoundPage() {
         size="md"
         variant="default"
         shape="rounded-xl"
-        onClick={() => navigate("/sparks")}
+        onClick={() => navigate("/notes")}
       />
     </div>
   );
