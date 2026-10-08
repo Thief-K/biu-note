@@ -180,8 +180,10 @@ export default function LiveMarkdownEditor({
         throw new Error(errData.error || t('common.saveFailed'));
       }
 
-      const data = (await res.json()) as { filepath: string };
-      setInitialContent(content);
+      const data = (await res.json()) as { filepath: string; content?: string };
+      const savedContent = data.content ?? content;
+      setContent(savedContent);
+      setInitialContent(savedContent);
       setInitialTags([...tags]);
 
       setSavedSuccess(true);

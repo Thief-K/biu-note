@@ -21,6 +21,7 @@ import {
   getHash,
   extractTags,
   cleanContentPureMarkdown,
+  formatMarkdownContent,
   extractTitleFromContent,
   getSafeRelativePath,
   isSparkOrTask
@@ -441,9 +442,12 @@ server.post(
       ? existingMeta.tags || []
       : extractTags(content);
 
-    const formattedContent = isSparkOrTask(finalRelativePath)
+    const cleanedContent = isSparkOrTask(finalRelativePath)
       ? content
       : cleanContentPureMarkdown(content);
+    const formattedContent = isSparkOrTask(finalRelativePath)
+      ? cleanedContent
+      : await formatMarkdownContent(finalRelativePath, cleanedContent);
 
     // If filename changed, write to new and delete old
     fs.writeFileSync(finalFullPath, formattedContent, 'utf8');
@@ -576,7 +580,8 @@ server.post('/api/notes/import', async (request: FastifyRequest, reply: FastifyR
   const content = fileBuffer.toString('utf8');
 
   const tags = extractTags(content);
-  const formattedContent = cleanContentPureMarkdown(content);
+  const cleanedContent = cleanContentPureMarkdown(content);
+  const formattedContent = await formatMarkdownContent(safeFilepath, cleanedContent);
   fs.writeFileSync(fullPath, formattedContent, 'utf8');
 
   // Update db cache

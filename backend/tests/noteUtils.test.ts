@@ -3,6 +3,7 @@ import {
   isSparkOrTask,
   extractTitleFromContent,
   cleanContentPureMarkdown,
+  formatMarkdownContent,
   extractTags,
   getSafeRelativePath,
   getHash
@@ -131,6 +132,28 @@ print("hello")
       expect(h1).not.toBe(h3);
       expect(typeof h1).toBe('string');
       expect(h1.length).toBe(32);
+    });
+  });
+
+  describe('formatMarkdownContent (oxfmt Markdown Formatter)', () => {
+    it('formats markdown lists, tables, and spacing cleanly', async () => {
+      const input = `# 标题测试\n- a\n-  b\n\n| 表头1 | 表头2 |\n|---|---|\n| 1 | 2 |`;
+      const formatted = await formatMarkdownContent('test.md', input);
+      expect(formatted).toContain('# 标题测试');
+      expect(formatted).toContain('- a\n- b');
+      expect(formatted).toContain('| 表头1 | 表头2 |');
+    });
+
+    it('handles empty or blank content gracefully', async () => {
+      expect(await formatMarkdownContent('empty.md', '')).toBe('');
+      expect(await formatMarkdownContent('null.md', null)).toBe('');
+      expect(await formatMarkdownContent('spaces.md', '   \n  ')).toBe('   \n  ');
+    });
+
+    it('preserves code blocks and formats embedded code correctly', async () => {
+      const input = `# 代码测试\n\n\`\`\`js\nconst   a =   1;\n\`\`\``;
+      const formatted = await formatMarkdownContent('code.md', input);
+      expect(formatted).toContain('const a = 1;');
     });
   });
 });

@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import path from 'node:path';
+import { format } from 'oxfmt';
 
 // Compute MD5 hash using Node.js built-in crypto.hash
 export const getHash = (content: string | undefined | null): string => {
@@ -74,4 +75,23 @@ export const getSafeRelativePath = (filepath: string): string => {
 export const isSparkOrTask = (filepath: string | undefined | null): boolean => {
   const normalized = (filepath || '').replace(/\\/g, '/');
   return normalized.includes('sparks/') || normalized.includes('tasks/');
+};
+
+/**
+ * Format markdown content using oxfmt with fallback.
+ * If formatting fails or throws, gracefully fallback to original content.
+ */
+export const formatMarkdownContent = async (
+  filename: string,
+  content: string | undefined | null
+): Promise<string> => {
+  if (!content || !content.trim()) return content || '';
+  try {
+    const safeFilename = filename.endsWith('.md') ? filename : `${filename}.md`;
+    const res = await format(safeFilename, content);
+    return res.code ?? content;
+  } catch (err: unknown) {
+    console.warn('[oxfmt] Failed to format markdown, falling back to original content:', err);
+    return content;
+  }
 };

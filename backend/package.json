@@ -15,7 +15,8 @@
     "@fastify/static": "^8.0.0",
     "dotenv": "^16.4.5",
     "fastify": "^5.0.0",
-    "openai": "^4.52.7"
+    "openai": "^4.52.7",
+    "oxfmt": "0.72.0"
   },
   "devDependencies": {
     "@types/node": "^22.13.0",
