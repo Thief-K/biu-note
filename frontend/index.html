@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN" class="dark">
   <head>
     <meta charset="UTF-8" />
@@ -13,17 +13,21 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BiuNote</title>
-    
+
     <!-- Critical Inline Styles to prevent white canvas paint before CSS/JS is loaded -->
     <style>
       :root {
         color-scheme: dark;
       }
-      html.dark, html.dark body, html.dark #root {
+      html.dark,
+      html.dark body,
+      html.dark #root {
         background-color: #09090b !important;
         color: #f4f4f5 !important;
       }
-      html.light, html.light body, html.light #root {
+      html.light,
+      html.light body,
+      html.light #root {
         background-color: #f4f4f6 !important;
         color: #18181b !important;
       }
@@ -31,21 +35,23 @@
 
     <!-- Synchronous script to immediately set theme classes before first DOM paint -->
     <script>
-      (function() {
+      (function () {
         try {
-          const theme = localStorage.getItem('biunote-theme') || 'dark';
-          const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          const theme = localStorage.getItem("biunote-theme") || "dark";
+          const isDark =
+            theme === "dark" ||
+            (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
           if (isDark) {
-            document.documentElement.classList.add('dark');
-            document.documentElement.classList.remove('light');
-            document.documentElement.style.colorScheme = 'dark';
+            document.documentElement.classList.add("dark");
+            document.documentElement.classList.remove("light");
+            document.documentElement.style.colorScheme = "dark";
           } else {
-            document.documentElement.classList.add('light');
-            document.documentElement.classList.remove('dark');
-            document.documentElement.style.colorScheme = 'light';
+            document.documentElement.classList.add("light");
+            document.documentElement.classList.remove("dark");
+            document.documentElement.style.colorScheme = "light";
           }
         } catch (e) {
-          document.documentElement.classList.add('dark');
+          document.documentElement.classList.add("dark");
         }
       })();
     </script>

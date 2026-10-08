@@ -10,8 +10,5 @@
     "resolveJsonModule": true
   },
   "files": [],
-  "references": [
-    { "path": "./backend" },
-    { "path": "./frontend" }
-  ]
+  "references": [{ "path": "./backend" }, { "path": "./frontend" }]
 }

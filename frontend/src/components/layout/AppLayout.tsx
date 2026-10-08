@@ -1,16 +1,16 @@
-import { useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
-import FloatingPillNav from './FloatingPillNav';
-import SparkModal from './SparkModal';
-import AiMemoModal from './AiMemoModal';
-import SearchOverlay from './SearchOverlay';
-import ConfirmModal from './ConfirmModal';
-import DiffModal, { type DiffModalCommitPayload } from '../DiffModal';
-import { useModalStore } from '../../stores/modalStore';
-import { useNotesStore } from '../../stores/notesStore';
-import { useThemeStore } from '../../stores/themeStore';
-import { useAuthStore } from '../../stores/authStore';
-import { apiFetch } from '../../utils/api';
+import { useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import FloatingPillNav from "./FloatingPillNav";
+import SparkModal from "./SparkModal";
+import AiMemoModal from "./AiMemoModal";
+import SearchOverlay from "./SearchOverlay";
+import ConfirmModal from "./ConfirmModal";
+import DiffModal, { type DiffModalCommitPayload } from "../DiffModal";
+import { useModalStore } from "../../stores/modalStore";
+import { useNotesStore } from "../../stores/notesStore";
+import { useThemeStore } from "../../stores/themeStore";
+import { useAuthStore } from "../../stores/authStore";
+import { apiFetch } from "../../utils/api";
 
 export default function AppLayout() {
   const isDiffOpen = useModalStore((s) => s.isDiffOpen);
@@ -23,8 +23,8 @@ export default function AppLayout() {
   const token = useAuthStore((s) => s.token);
 
   const location = useLocation();
-  const isChat = location.pathname.startsWith('/chat');
-  const isNoteDetail = location.pathname.startsWith('/notes/') && location.pathname !== '/notes';
+  const isChat = location.pathname.startsWith("/chat");
+  const isNoteDetail = location.pathname.startsWith("/notes/") && location.pathname !== "/notes";
   const hideBottomNav = isChat || isNoteDetail;
 
   useEffect(() => {
@@ -40,21 +40,21 @@ export default function AppLayout() {
 
   const handleDiffConfirm = async (commitPayload: DiffModalCommitPayload) => {
     try {
-      const res = await apiFetch('/api/ai/commit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(commitPayload)
+      const res = await apiFetch("/api/ai/commit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(commitPayload),
       });
       if (res.ok) {
         await fetchNotes();
         closeDiff();
       } else {
         const errData = await res.json();
-        alert(`提交失败: ${errData.error || '未知错误'}`);
+        alert(`提交失败: ${errData.error || "未知错误"}`);
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      console.error('Failed to commit AI diff:', msg);
+      console.error("Failed to commit AI diff:", msg);
       alert(`提交失败: ${msg}`);
     }
   };
@@ -80,11 +80,7 @@ export default function AppLayout() {
       <SearchOverlay />
       <ConfirmModal />
       {isDiffOpen && diffData && (
-        <DiffModal
-          data={diffData}
-          onCancel={closeDiff}
-          onConfirm={handleDiffConfirm}
-        />
+        <DiffModal data={diffData} onCancel={closeDiff} onConfirm={handleDiffConfirm} />
       )}
     </div>
   );

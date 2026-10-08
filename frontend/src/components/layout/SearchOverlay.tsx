@@ -1,15 +1,15 @@
-import { useState, useEffect, useRef, useMemo, type KeyboardEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Search, X, FileText, Lightbulb } from 'lucide-react';
-import { useModalStore } from '../../stores/modalStore';
-import { useNotesStore } from '../../stores/notesStore';
-import { isSparkOrTask } from '../../utils/note';
-import { useI18n } from '../../i18n';
-import { formatDate } from '../../utils/date';
-import { TagList } from '../common/TagBadge';
-import EmptyState from '../common/EmptyState';
-import IconButton from '../common/IconButton';
-import type { NoteItem } from '../../types';
+import { useState, useEffect, useRef, useMemo, type KeyboardEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import { Search, X, FileText, Lightbulb } from "lucide-react";
+import { useModalStore } from "../../stores/modalStore";
+import { useNotesStore } from "../../stores/notesStore";
+import { isSparkOrTask } from "../../utils/note";
+import { useI18n } from "../../i18n";
+import { formatDate } from "../../utils/date";
+import { TagList } from "../common/TagBadge";
+import EmptyState from "../common/EmptyState";
+import IconButton from "../common/IconButton";
+import type { NoteItem } from "../../types";
 
 export default function SearchOverlay() {
   const isSearchOpen = useModalStore((s) => s.isSearchOpen);
@@ -33,16 +33,16 @@ export default function SearchOverlay() {
   // Global Ctrl+K / Cmd+K listener
   useEffect(() => {
     const handleKeyDown = (e: globalThis.KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         setIsSearchOpen((prev) => !prev);
-      } else if (e.key === 'Escape' && isSearchOpen) {
+      } else if (e.key === "Escape" && isSearchOpen) {
         e.preventDefault();
         setIsSearchOpen(false);
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isSearchOpen, setIsSearchOpen]);
 
   // Filter notes
@@ -50,10 +50,10 @@ export default function SearchOverlay() {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return allNotes.slice(0, 20);
 
-    if (q.startsWith('#')) {
+    if (q.startsWith("#")) {
       const tagQuery = q.slice(1);
       return allNotes.filter(
-        (n) => Array.isArray(n.tags) && n.tags.some((tag) => tag.toLowerCase().includes(tagQuery))
+        (n) => Array.isArray(n.tags) && n.tags.some((tag) => tag.toLowerCase().includes(tagQuery)),
       );
     }
 
@@ -61,7 +61,8 @@ export default function SearchOverlay() {
       .filter((n) => {
         const titleMatch = n.filepath.toLowerCase().includes(q);
         const contentMatch = n.content && n.content.toLowerCase().includes(q);
-        const tagMatch = Array.isArray(n.tags) && n.tags.some((tag) => tag.toLowerCase().includes(q));
+        const tagMatch =
+          Array.isArray(n.tags) && n.tags.some((tag) => tag.toLowerCase().includes(q));
         return titleMatch || contentMatch || tagMatch;
       })
       .slice(0, 30);
@@ -71,27 +72,27 @@ export default function SearchOverlay() {
 
   const handleSelect = (note: NoteItem) => {
     setIsSearchOpen(false);
-    setSearchQuery('');
+    setSearchQuery("");
     if (isSparkOrTask(note.filepath)) {
-      navigate('/sparks');
+      navigate("/sparks");
     } else {
       navigate(`/notes/${encodeURIComponent(note.filepath)}`);
     }
   };
 
   const handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'ArrowDown') {
+    if (e.key === "ArrowDown") {
       e.preventDefault();
       setSelectedIndex((prev) => (prev < filteredResults.length - 1 ? prev + 1 : prev));
-    } else if (e.key === 'ArrowUp') {
+    } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0));
-    } else if (e.key === 'Enter') {
+    } else if (e.key === "Enter") {
       e.preventDefault();
       if (filteredResults[selectedIndex]) {
         handleSelect(filteredResults[selectedIndex]);
       }
-    } else if (e.key === 'Escape') {
+    } else if (e.key === "Escape") {
       e.preventDefault();
       setIsSearchOpen(false);
     }
@@ -112,7 +113,7 @@ export default function SearchOverlay() {
           <input
             ref={inputRef}
             type="text"
-            placeholder={t('notes.searchPlaceholder')}
+            placeholder={t("notes.searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
@@ -134,12 +135,12 @@ export default function SearchOverlay() {
         <div className="flex-1 overflow-y-auto p-2">
           {filteredResults.length === 0 ? (
             <div className="py-6">
-              <EmptyState icon={Search} title={t('common.empty')} />
+              <EmptyState icon={Search} title={t("common.empty")} />
             </div>
           ) : (
             filteredResults.map((note, idx) => {
               const isSpark = isSparkOrTask(note.filepath);
-              const displayName = note.filepath.replace('.md', '');
+              const displayName = note.filepath.replace(".md", "");
               const Icon = isSpark ? Lightbulb : FileText;
 
               return (
@@ -148,12 +149,14 @@ export default function SearchOverlay() {
                   onClick={() => handleSelect(note)}
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`p-3 rounded-xl flex items-center justify-between cursor-pointer transition-all ${
-                    idx === selectedIndex ? 'bg-zinc-800 text-zinc-100' : 'text-zinc-400 hover:bg-zinc-800/40'
+                    idx === selectedIndex
+                      ? "bg-zinc-800 text-zinc-100"
+                      : "text-zinc-400 hover:bg-zinc-800/40"
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="p-2 rounded-lg bg-zinc-950/60 border border-zinc-800 shrink-0">
-                      <Icon className={`w-4 h-4 ${isSpark ? 'text-amber-400' : 'text-blue-400'}`} />
+                      <Icon className={`w-4 h-4 ${isSpark ? "text-amber-400" : "text-blue-400"}`} />
                     </div>
                     <div className="flex flex-col min-w-0">
                       <span className="text-sm font-medium text-zinc-100 truncate">

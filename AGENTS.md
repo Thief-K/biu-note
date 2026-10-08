@@ -11,6 +11,7 @@ pnpm --filter biunote-frontend build   # Build frontend production bundle
 ```
 
 ### Local Setup & Environment
+
 - **Runtime Requirements**: Node.js `>= 22.0.0`, pnpm `>= 9.0.0`, Git installed.
 - **Backend Configuration** (`backend/.env`):
   ```env
@@ -18,7 +19,7 @@ pnpm --filter biunote-frontend build   # Build frontend production bundle
   NOTES_DIR=../notes
   LOGIN_TOKEN=biunote-secret-token
   ```
-  *(AI API Key and models are configured in Web UI and stored in `notes/.biunote/config.json`)*
+  _(AI API Key and models are configured in Web UI and stored in `notes/.biunote/config.json`)_
 
 ---
 
@@ -59,6 +60,7 @@ biu-note/
 ## 3. Operating Invariants & Rules
 
 ### Data & Storage
+
 - **Decoupled Metadata**: Physical `.md` files are **100% pure plaintext**—never inject YAML frontmatter or `#tag` lines. Tags and metadata reside exclusively in SQLite (`notes/.biunote/biunote.db`) which is tracked by Git.
 - **Local Secrets & Config**: AI API keys and model configs reside in `notes/.biunote/config.json` and are strictly ignored in `.gitignore`.
 - **Sparks & Tasks**: Files under `sparks/` and `tasks/` never contain tags.
@@ -66,11 +68,13 @@ biu-note/
 - **JIT Embeddings**: Vector embeddings are strictly generated **Just-in-Time (JIT)** in `notes/.biunote/vectors.json` (ignored in `.gitignore`) prior to `/api/ai/process` or `/api/ai/chat`. Never trigger batch embeddings during startup, save, or import.
 
 ### Architecture & Runtime
+
 - **Entry Points**: `backend/server.ts` and `frontend/src/main.tsx`. Production serves assets from `frontend/dist/`.
 - **Native Node.js 22 Runtime**: Uses native `import.meta.dirname` and built-in `node:sqlite` (`DatabaseSync`). `biunote.db` is tracked by Git, while `config.json` and `vectors.json` are ignored in `notes/.gitignore`. Git features gracefully degrade if Git is not installed.
 - **Authentication**: All private API endpoints require `Authorization: Bearer <LOGIN_TOKEN>` header (`localStorage.biunote_token`).
 
 ### UI & Component Invariants
+
 - **Flat Aesthetic (Zero Shadow)**: Use crisp borders (`border-zinc-800` / semantic accents) and avoid drop shadows (`shadow-none`).
 - **Color System & Module Accents**:
   - Dark: Canvas `#09090b`, Card `#18181b`, Border `#27272a`.
@@ -115,6 +119,7 @@ biu-note/
 - **Anti-FOUC**: `index.html` uses Critical Inline CSS and synchronous `<head>` script to eliminate theme flicker.
 
 ### Internationalization (i18n) Invariants
+
 - **No Hardcoded UI Strings**: All user-facing labels, buttons, placehholders, alerts, and confirmations must use `useI18n()` hook via `t('category.key', params)`.
 - **Synchronized Dictionaries**: Any key added to `frontend/src/i18n/locales/zh.ts` must have an identical counterpart in `frontend/src/i18n/locales/en.ts` (enforced by automated unit tests).
 - **Concise Translations**: Keep English and Chinese copy concise, crisp, and clear without unnecessary verbiage.

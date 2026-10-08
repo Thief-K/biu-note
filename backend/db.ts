@@ -1,13 +1,15 @@
-import path from 'node:path';
-import fs from 'node:fs';
-import { DatabaseSync, type StatementSync } from 'node:sqlite';
-import type { NoteMetadata, DbMetadataRow, AIConfig } from './types';
+import path from "node:path";
+import fs from "node:fs";
+import { DatabaseSync, type StatementSync } from "node:sqlite";
+import type { NoteMetadata, DbMetadataRow, AIConfig } from "./types";
 
 const __dirname = import.meta.dirname;
 
 // Resolve notes directory (supports NOTES_DIR or DATA_DIR/notes env vars)
 const getNotesDir = (): string => {
-  const rawNotesDir = process.env.NOTES_DIR || (process.env.DATA_DIR ? path.join(process.env.DATA_DIR, 'notes') : '../notes');
+  const rawNotesDir =
+    process.env.NOTES_DIR ||
+    (process.env.DATA_DIR ? path.join(process.env.DATA_DIR, "notes") : "../notes");
   return path.isAbsolute(rawNotesDir) ? rawNotesDir : path.resolve(process.cwd(), rawNotesDir);
 };
 
@@ -25,7 +27,7 @@ let stmts: PreparedStatements | null = null;
 // Resolve config.json path
 const getConfigPath = (): string => {
   const notesDir = getNotesDir();
-  return path.join(notesDir, '.biunote', 'config.json');
+  return path.join(notesDir, ".biunote", "config.json");
 };
 
 // Read local configuration JSON
@@ -33,11 +35,11 @@ const readConfig = (): Record<string, string> => {
   try {
     const configPath = getConfigPath();
     if (fs.existsSync(configPath)) {
-      return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      return JSON.parse(fs.readFileSync(configPath, "utf8"));
     }
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error('Failed to read config.json:', msg);
+    console.error("Failed to read config.json:", msg);
   }
   return {};
 };
@@ -46,15 +48,15 @@ const readConfig = (): Record<string, string> => {
 const writeConfig = (data: Record<string, string>): void => {
   try {
     const notesDir = getNotesDir();
-    const biunoteDir = path.join(notesDir, '.biunote');
+    const biunoteDir = path.join(notesDir, ".biunote");
     if (!fs.existsSync(biunoteDir)) {
       fs.mkdirSync(biunoteDir, { recursive: true });
     }
-    const configPath = path.join(biunoteDir, 'config.json');
-    fs.writeFileSync(configPath, JSON.stringify(data, null, 2) + '\n', 'utf8');
+    const configPath = path.join(biunoteDir, "config.json");
+    fs.writeFileSync(configPath, JSON.stringify(data, null, 2) + "\n", "utf8");
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error('Failed to write config.json:', msg);
+    console.error("Failed to write config.json:", msg);
   }
 };
 
@@ -62,12 +64,12 @@ const writeConfig = (data: Record<string, string>): void => {
 const getDb = (): { db: DatabaseSync; stmts: PreparedStatements } => {
   if (!db || !stmts) {
     const notesDir = getNotesDir();
-    const biunoteDir = path.join(notesDir, '.biunote');
+    const biunoteDir = path.join(notesDir, ".biunote");
     if (!fs.existsSync(biunoteDir)) {
       fs.mkdirSync(biunoteDir, { recursive: true });
     }
 
-    const dbPath = path.join(biunoteDir, 'biunote.db');
+    const dbPath = path.join(biunoteDir, "biunote.db");
     db = new DatabaseSync(dbPath);
 
     // Initialize Schema (pure metadata only)
@@ -82,14 +84,16 @@ const getDb = (): { db: DatabaseSync; stmts: PreparedStatements } => {
 
     // Prepare reusable statements
     stmts = {
-      countMetadata: db.prepare('SELECT COUNT(*) AS count FROM metadata'),
-      getMetadata: db.prepare('SELECT filepath, hash, tags, updated_at FROM metadata WHERE filepath = ?'),
-      allMetadata: db.prepare('SELECT filepath, hash, tags, updated_at FROM metadata'),
+      countMetadata: db.prepare("SELECT COUNT(*) AS count FROM metadata"),
+      getMetadata: db.prepare(
+        "SELECT filepath, hash, tags, updated_at FROM metadata WHERE filepath = ?",
+      ),
+      allMetadata: db.prepare("SELECT filepath, hash, tags, updated_at FROM metadata"),
       saveMetadata: db.prepare(`
         INSERT INTO metadata (filepath, hash, tags, updated_at) VALUES (?, ?, ?, ?)
         ON CONFLICT(filepath) DO UPDATE SET hash = excluded.hash, tags = excluded.tags, updated_at = excluded.updated_at
       `),
-      deleteMetadata: db.prepare('DELETE FROM metadata WHERE filepath = ?')
+      deleteMetadata: db.prepare("DELETE FROM metadata WHERE filepath = ?"),
     };
   }
   return { db, stmts };
@@ -101,10 +105,12 @@ export const initDb = async (): Promise<void> => {
     const { stmts } = getDb();
     const countRow = stmts.countMetadata.get() as { count: number } | undefined;
     const totalCount = countRow ? countRow.count : 0;
-    console.log(`Initialized SQLite database (node:sqlite) in notes/.biunote/biunote.db. Loaded ${totalCount} metadata records.`);
+    console.log(
+      `Initialized SQLite database (node:sqlite) in notes/.biunote/biunote.db. Loaded ${totalCount} metadata records.`,
+    );
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error('Failed to initialize SQLite database:', msg);
+    console.error("Failed to initialize SQLite database:", msg);
   }
 };
 
@@ -124,10 +130,10 @@ export const setSetting = async (key: string, value: string | number | boolean):
 // Get AI Config from config.json
 export const getAIConfig = async (): Promise<AIConfig> => {
   const config = readConfig();
-  const apiKey = config.openai_api_key || '';
-  const baseUrl = config.openai_base_url || '';
-  const model = config.openai_model || '';
-  const embeddingModel = config.embedding_model || '';
+  const apiKey = config.openai_api_key || "";
+  const baseUrl = config.openai_base_url || "";
+  const model = config.openai_model || "";
+  const embeddingModel = config.embedding_model || "";
   return { apiKey, baseUrl, model, embeddingModel };
 };
 
@@ -136,28 +142,30 @@ export const saveMetadata = async (
   filepath: string,
   hash: string,
   tags: string[],
-  updated_at?: number
+  updated_at?: number,
 ): Promise<void> => {
   const { stmts } = getDb();
   const tagsJson = JSON.stringify(Array.isArray(tags) ? tags : []);
-  stmts.saveMetadata.run(filepath, hash || '', tagsJson, updated_at || Date.now());
+  stmts.saveMetadata.run(filepath, hash || "", tagsJson, updated_at || Date.now());
 };
 
 // Format DB row into metadata object
-const formatMetaRow = (row: DbMetadataRow | Record<string, unknown> | undefined | null): NoteMetadata | null => {
+const formatMetaRow = (
+  row: DbMetadataRow | Record<string, unknown> | undefined | null,
+): NoteMetadata | null => {
   if (!row) return null;
   const typedRow = row as DbMetadataRow;
   let parsedTags: string[] = [];
   try {
-    parsedTags = JSON.parse(typedRow.tags || '[]');
+    parsedTags = JSON.parse(typedRow.tags || "[]");
   } catch {
     parsedTags = [];
   }
   return {
     filepath: String(typedRow.filepath),
-    hash: String(typedRow.hash || ''),
+    hash: String(typedRow.hash || ""),
     tags: parsedTags,
-    updated_at: Number(typedRow.updated_at)
+    updated_at: Number(typedRow.updated_at),
   };
 };
 

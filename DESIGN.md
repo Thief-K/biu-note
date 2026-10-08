@@ -7,7 +7,7 @@ BiuNote is a minimalist, local-first, AI-native knowledge base built around Mark
 ```mermaid
 flowchart TD
     Client([Browser UI / React 19]) <--> |HTTP / JSON| Fastify[Fastify Backend Engine]
-    
+
     subgraph Frontend [Frontend: React 19 + Tailwind 4]
         Router[Router DOM]
         Stores[Zustand Stores: authStore / notesStore / modalStore / themeStore / i18n]
@@ -41,16 +41,17 @@ flowchart TD
 
 ## 2. Layered Storage Model
 
-| Layer | Medium | Location | Role & Lifecycle |
-| :--- | :--- | :--- | :--- |
-| **Physical Content** | Pure Markdown | `notes/**/*.md`, `notes/sparks/*.md` | 100% pure plaintext without metadata pollution. |
-| **Metadata Cache** | SQLite (`DatabaseSync`) | `notes/.biunote/biunote.db` | `filepath`, `hash`, `tags`, `updated_at` for instant query & aggregation. |
-| **Vector Index** | JSON Cache | `notes/.biunote/vectors.json` | Document embeddings generated strictly **Just-in-Time (JIT)**. |
-| **Version History** | Git Repository | `notes/.git/` | Standalone Git repository initialized for local version tracking. |
+| Layer                | Medium                  | Location                             | Role & Lifecycle                                                          |
+| :------------------- | :---------------------- | :----------------------------------- | :------------------------------------------------------------------------ |
+| **Physical Content** | Pure Markdown           | `notes/**/*.md`, `notes/sparks/*.md` | 100% pure plaintext without metadata pollution.                           |
+| **Metadata Cache**   | SQLite (`DatabaseSync`) | `notes/.biunote/biunote.db`          | `filepath`, `hash`, `tags`, `updated_at` for instant query & aggregation. |
+| **Vector Index**     | JSON Cache              | `notes/.biunote/vectors.json`        | Document embeddings generated strictly **Just-in-Time (JIT)**.            |
+| **Version History**  | Git Repository          | `notes/.git/`                        | Standalone Git repository initialized for local version tracking.         |
 
 ## 3. Design System & UI Architecture
 
 ### 3.1 Color Semantics & Tokens
+
 - **Dark Mode**: Canvas `#09090b` (`bg-zinc-950`), Cards `#18181b` (`bg-zinc-900`), Border `#27272a` (`border-zinc-800`).
 - **Light Mode**: Canvas `#f4f4f6`, Cards `#ffffff`, Border `#d4d4d8` (high-contrast crisp layout).
 - **Module Accent Pairing**:
@@ -64,20 +65,21 @@ flowchart TD
 
 ### 3.2 Reusable Component Hierarchy (`frontend/src/components/common/`)
 
-| Component | Responsibility & Invariants |
-| :--- | :--- |
-| **`IconButton`** | Pure minimalist icon button. Zero redundant text labels, zero `title` hover tooltips, micro-press physics (`active:scale-95`), loading indicator support. |
-| **`AlertBanner`** | High-contrast notification/warning banner (`warning`, `error`, `info`, `success`) supporting right-side `action` slot for `IconButton`. |
-| **`PageHeader`** | Sticky top bar with module badge, title, count badge, optional `onBack` handler, and right-side `actions` slot. |
-| **`SearchFilterBar`** | Collapsible search input with tag query support (`#tag`) and clean clear button. |
-| **`TagBadge` & `TagList`** | Emerald capsule badges for tags with optional remove button. |
-| **`MarkdownViewer`** | Shared high-fidelity Markdown renderer with `marked` renderer-level synchronous syntax highlighting (`highlight.js`) and static copy button markup. 100% shared across mobile reader and PC preview. |
-| **`EmptyState`** | Standard placeholder when a collection is empty. |
-| **`QuickModal`** | Fast capture & sparks modal (`Ctrl + Enter`) featuring dynamic submit button highlighting and optional `leftAction` slot (e.g. `VoiceInput` button). |
-| **`OutlineDrawer`** | Slide-over table of contents drawer for Reader and Editor. Filtered strictly to H1~H3 with clean minimal indentation hierarchy. |
-| **`AiModifyDrawer`** | Slide-over AI instruction drawer with preset chips, draft mode detection for empty notes, and reactive submit button. |
+| Component                  | Responsibility & Invariants                                                                                                                                                                          |
+| :------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`IconButton`**           | Pure minimalist icon button. Zero redundant text labels, zero `title` hover tooltips, micro-press physics (`active:scale-95`), loading indicator support.                                            |
+| **`AlertBanner`**          | High-contrast notification/warning banner (`warning`, `error`, `info`, `success`) supporting right-side `action` slot for `IconButton`.                                                              |
+| **`PageHeader`**           | Sticky top bar with module badge, title, count badge, optional `onBack` handler, and right-side `actions` slot.                                                                                      |
+| **`SearchFilterBar`**      | Collapsible search input with tag query support (`#tag`) and clean clear button.                                                                                                                     |
+| **`TagBadge` & `TagList`** | Emerald capsule badges for tags with optional remove button.                                                                                                                                         |
+| **`MarkdownViewer`**       | Shared high-fidelity Markdown renderer with `marked` renderer-level synchronous syntax highlighting (`highlight.js`) and static copy button markup. 100% shared across mobile reader and PC preview. |
+| **`EmptyState`**           | Standard placeholder when a collection is empty.                                                                                                                                                     |
+| **`QuickModal`**           | Fast capture & sparks modal (`Ctrl + Enter`) featuring dynamic submit button highlighting and optional `leftAction` slot (e.g. `VoiceInput` button).                                                 |
+| **`OutlineDrawer`**        | Slide-over table of contents drawer for Reader and Editor. Filtered strictly to H1~H3 with clean minimal indentation hierarchy.                                                                      |
+| **`AiModifyDrawer`**       | Slide-over AI instruction drawer with preset chips, draft mode detection for empty notes, and reactive submit button.                                                                                |
 
 ### 3.3 Editor, Reader & Preview Architecture
+
 - **Single-Pane Toggle Preview (VS Code Model)**:
   - **New Note (`/notes/new`)**: Starts in **Editor Mode** (`isPreview = false`) with first-line auto-focus.
   - **Existing Note (`/notes/:filepath`)**: Starts in **Preview Mode** (`isPreview = true`) for immersive reading.
@@ -116,9 +118,11 @@ flowchart TD
   - `lg` (40px, `rounded-xl`): Full-width login CTA.
 
 ### 3.4 Dynamic Interactive Highlighting
+
 Input-driven CTA buttons (`QuickModal`, `AiModifyDrawer`, `ChatPage`, `LoginPage`) remain in a muted inactive state (`bg-zinc-800/80 text-zinc-500 opacity-40`) until valid user input is provided, upon which they immediately light up with vibrant module-accent solid colors and subtle shadows.
 
 ### 3.5 Navigation & AI Chat Architecture
+
 - **Floating Pill Navigation**: Rendered on `/sparks`, `/notes`, and `/settings`.
 - **Immersive AI Chat Mode (`/chat`)**:
   - The floating pill is hidden and the input bar cleanly adheres to the viewport bottom (`pb-safe`) with an integrated `PageHeader` back handler.
@@ -128,26 +132,29 @@ Input-driven CTA buttons (`QuickModal`, `AiModifyDrawer`, `ChatPage`, `LoginPage
   - **Markdown Response Streaming**: Assistant bubbles render with synchronous `MarkdownViewer` syntax highlighting and copy buttons.
 
 ### 3.6 Anti-FOUC Architecture
+
 Critical Inline CSS in `index.html` `<head>` sets base theme variables and synchronously evaluates `localStorage.theme` with `@custom-variant dark (&:where(.dark, .dark *));` in `index.css` to eliminate theme flicker regardless of OS preferences.
 
 ### 3.7 Lightweight Internationalization Architecture (i18n)
+
 - **Zustand Reactive Store (`frontend/src/i18n/index.js`)**: Manages `language` (`zh` / `en`) state with `localStorage['biunote-language']` persistence and browser locale auto-detection.
 - **Concise Dot-Path Resolver (`t(key, params)`)**: Supports nested keys (`common.save`, `notes.deleteConfirm`), parameter interpolation (`{title}`, `{count}`), and deterministic fallback to Chinese (`zh`).
 - **Synchronized Dictionaries**: [zh.js](file:///c:/Users/konpm/Documents/mine/biu-note/frontend/src/i18n/locales/zh.js) and [en.js](file:///c:/Users/konpm/Documents/mine/biu-note/frontend/src/i18n/locales/en.js) share 100% identical key tree structure verified by automated unit tests.
 
 ## 4. RESTful API Contracts
 
-| Route | Method | Description |
-| :--- | :--- | :--- |
-| `/api/sparks` | `POST` / `PUT` / `DELETE` | Create, update, or remove spark files in `sparks/`. |
-| `/api/notes` | `GET` | List all notes & sparks with SQLite-cached metadata. |
-| `/api/notes/raw` | `GET` / `POST` | Fetch raw markdown content or save note (auto-renaming from H1). |
-| `/api/notes/delete` | `POST` | Delete physical note and purge SQLite metadata. |
-| `/api/notes/import` | `POST` | Batch import `.md` files via multipart upload. |
-| `/api/ai/process` | `POST` | Fast capture pipeline: JIT vector sync, similarity retrieval, proposed merge/create diff. |
-| `/api/ai/commit` | `POST` | Persist and commit user-confirmed diff to disk. |
-| `/api/ai/chat` | `POST` | Multi-document RAG chat over knowledge base with explicit `activeNoteFiles` context synthesis. |
+| Route               | Method                    | Description                                                                                    |
+| :------------------ | :------------------------ | :--------------------------------------------------------------------------------------------- |
+| `/api/sparks`       | `POST` / `PUT` / `DELETE` | Create, update, or remove spark files in `sparks/`.                                            |
+| `/api/notes`        | `GET`                     | List all notes & sparks with SQLite-cached metadata.                                           |
+| `/api/notes/raw`    | `GET` / `POST`            | Fetch raw markdown content or save note (auto-renaming from H1).                               |
+| `/api/notes/delete` | `POST`                    | Delete physical note and purge SQLite metadata.                                                |
+| `/api/notes/import` | `POST`                    | Batch import `.md` files via multipart upload.                                                 |
+| `/api/ai/process`   | `POST`                    | Fast capture pipeline: JIT vector sync, similarity retrieval, proposed merge/create diff.      |
+| `/api/ai/commit`    | `POST`                    | Persist and commit user-confirmed diff to disk.                                                |
+| `/api/ai/chat`      | `POST`                    | Multi-document RAG chat over knowledge base with explicit `activeNoteFiles` context synthesis. |
 
 ## 5. Security Architecture
+
 - **Path Sanitization**: All file paths validated via `getSafeRelativePath()` against path traversal (`..`, drive letters).
 - **Authentication**: Bearer Token middleware protects all `/api/*` endpoints (except `/api/auth/login`).

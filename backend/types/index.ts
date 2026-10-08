@@ -35,7 +35,7 @@ export interface SimilarResult {
 export interface RetrievedNoteCandidate {
   filepath: string;
   similarity: number;
-  source: 'vector' | 'keyword';
+  source: "vector" | "keyword";
 }
 
 export interface NoteItem {
@@ -46,12 +46,12 @@ export interface NoteItem {
 }
 
 export interface ChatMessage {
-  role: 'system' | 'user' | 'assistant' | string;
+  role: "system" | "user" | "assistant" | string;
   content: string;
 }
 
 export interface AiProcessResponse {
-  action: 'create' | 'merge';
+  action: "create" | "merge";
   target_file: string;
   proposed_title?: string;
   proposed_tags?: string[];

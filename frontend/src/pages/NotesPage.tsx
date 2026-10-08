@@ -1,26 +1,26 @@
-import { useState, useMemo, type DragEvent, type MouseEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FileText, Plus, Search, Trash2, Clock } from 'lucide-react';
-import { useNotesStore } from '../stores/notesStore';
-import { useModalStore } from '../stores/modalStore';
-import { apiFetch } from '../utils/api';
-import { useI18n } from '../i18n';
-import { formatDate } from '../utils/date';
-import PageHeader from '../components/common/PageHeader';
-import SearchFilterBar from '../components/common/SearchFilterBar';
-import EmptyState from '../components/common/EmptyState';
-import { TagList } from '../components/common/TagBadge';
-import IconButton from '../components/common/IconButton';
-import ContentContainer from '../components/common/ContentContainer';
-import PullToRefresh from '../components/common/PullToRefresh';
-import type { NoteItem } from '../types';
+import { useState, useMemo, type DragEvent, type MouseEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import { FileText, Plus, Search, Trash2, Clock } from "lucide-react";
+import { useNotesStore } from "../stores/notesStore";
+import { useModalStore } from "../stores/modalStore";
+import { apiFetch } from "../utils/api";
+import { useI18n } from "../i18n";
+import { formatDate } from "../utils/date";
+import PageHeader from "../components/common/PageHeader";
+import SearchFilterBar from "../components/common/SearchFilterBar";
+import EmptyState from "../components/common/EmptyState";
+import { TagList } from "../components/common/TagBadge";
+import IconButton from "../components/common/IconButton";
+import ContentContainer from "../components/common/ContentContainer";
+import PullToRefresh from "../components/common/PullToRefresh";
+import type { NoteItem } from "../types";
 
 export default function NotesPage() {
   const notes = useNotesStore((s) => s.notes);
   const fetchNotes = useNotesStore((s) => s.fetchNotes);
   const showConfirm = useModalStore((s) => s.showConfirm);
   const { t } = useI18n();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const navigate = useNavigate();
 
@@ -30,13 +30,13 @@ export default function NotesPage() {
     if (!q) return notes;
 
     // #tag filtering: Matches note tags specifically
-    if (q.startsWith('#')) {
+    if (q.startsWith("#")) {
       const tagQuery = q.slice(1).trim();
       if (!tagQuery) {
         return notes.filter((n) => Array.isArray(n.tags) && n.tags.length > 0);
       }
       return notes.filter(
-        (n) => Array.isArray(n.tags) && n.tags.some((tag) => tag.toLowerCase().includes(tagQuery))
+        (n) => Array.isArray(n.tags) && n.tags.some((tag) => tag.toLowerCase().includes(tagQuery)),
       );
     }
 
@@ -51,19 +51,19 @@ export default function NotesPage() {
   // Handle Delete Note
   const handleDeleteNote = (e: MouseEvent, note: NoteItem) => {
     e.stopPropagation();
-    const title = note.filepath.replace('.md', '');
-    showConfirm(t('notes.deleteConfirm', { title }), async () => {
+    const title = note.filepath.replace(".md", "");
+    showConfirm(t("notes.deleteConfirm", { title }), async () => {
       try {
-        const res = await apiFetch('/api/notes/delete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ filepath: note.filepath })
+        const res = await apiFetch("/api/notes/delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ filepath: note.filepath }),
         });
         if (res.ok) {
           await fetchNotes();
         }
       } catch (err: unknown) {
-        console.error('Failed to delete note:', err);
+        console.error("Failed to delete note:", err);
       }
     });
   };
@@ -71,20 +71,20 @@ export default function NotesPage() {
   // Handle Drop .md files to import
   const handleDropFiles = async (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const files = Array.from(e.dataTransfer.files).filter((f) => f.name.endsWith('.md'));
+    const files = Array.from(e.dataTransfer.files).filter((f) => f.name.endsWith(".md"));
     if (files.length === 0) return;
 
-    showConfirm(t('notes.importConfirm', { count: files.length }), async () => {
+    showConfirm(t("notes.importConfirm", { count: files.length }), async () => {
       for (const file of files) {
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append("file", file);
         try {
-          await apiFetch('/api/notes/import', {
-            method: 'POST',
-            body: formData
+          await apiFetch("/api/notes/import", {
+            method: "POST",
+            body: formData,
           });
         } catch (err: unknown) {
-          console.error('Failed to import note:', err);
+          console.error("Failed to import note:", err);
         }
       }
       await fetchNotes();
@@ -101,7 +101,7 @@ export default function NotesPage() {
       <PageHeader
         icon={FileText}
         iconClassName="bg-blue-500/10 border-blue-500/20 text-blue-400"
-        title={t('notes.title')}
+        title={t("notes.title")}
         count={filteredNotes.length}
         countClassName="bg-blue-500/10 text-blue-400 border-blue-500/20"
         actions={
@@ -109,11 +109,11 @@ export default function NotesPage() {
             <IconButton
               icon={Search}
               size="md"
-              variant={isSearchVisible || searchQuery ? 'blue' : 'default'}
+              variant={isSearchVisible || searchQuery ? "blue" : "default"}
               onClick={() => {
                 setIsSearchVisible((prev) => !prev);
                 if (isSearchVisible) {
-                  setSearchQuery('');
+                  setSearchQuery("");
                 }
               }}
             />
@@ -123,7 +123,7 @@ export default function NotesPage() {
                 icon={Plus}
                 size="md"
                 variant="primary-blue"
-                onClick={() => navigate('/notes/new')}
+                onClick={() => navigate("/notes/new")}
               />
             </div>
           </>
@@ -133,7 +133,7 @@ export default function NotesPage() {
           <SearchFilterBar
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
-            placeholder={t('notes.searchPlaceholder')}
+            placeholder={t("notes.searchPlaceholder")}
             accentColor="blue"
           />
         )}
@@ -147,10 +147,10 @@ export default function NotesPage() {
       >
         <ContentContainer>
           {filteredNotes.length === 0 ? (
-            <EmptyState icon={FileText} title={t('notes.empty')} />
+            <EmptyState icon={FileText} title={t("notes.empty")} />
           ) : (
             filteredNotes.map((note) => {
-              const title = note.filepath.replace('.md', '');
+              const title = note.filepath.replace(".md", "");
 
               return (
                 <div

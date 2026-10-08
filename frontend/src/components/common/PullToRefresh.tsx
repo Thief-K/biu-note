@@ -1,10 +1,10 @@
-import { useState, useRef, useEffect, useCallback, type ReactNode, type TouchEvent } from 'react';
-import { ArrowDown, Loader2 } from 'lucide-react';
+import { useState, useRef, useEffect, useCallback, type ReactNode, type TouchEvent } from "react";
+import { ArrowDown, Loader2 } from "lucide-react";
 
 export interface PullToRefreshProps {
   onRefresh: () => Promise<void> | void;
   disabled?: boolean;
-  accentColor?: 'amber' | 'blue' | 'emerald' | string;
+  accentColor?: "amber" | "blue" | "emerald" | string;
   className?: string;
   children: ReactNode;
 }
@@ -15,9 +15,9 @@ const MAX_PULL_DISTANCE = 80; // Maximum allowed pull offset
 export default function PullToRefresh({
   onRefresh,
   disabled = false,
-  accentColor = 'amber',
-  className = '',
-  children
+  accentColor = "amber",
+  className = "",
+  children,
 }: PullToRefreshProps) {
   const [pullDistance, setPullDistance] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -27,17 +27,17 @@ export default function PullToRefresh({
 
   const accentStyles: Record<string, { indicator: string; icon: string }> = {
     amber: {
-      indicator: 'border-amber-500/40 text-amber-500 dark:text-amber-400 bg-zinc-900',
-      icon: 'text-amber-500 dark:text-amber-400'
+      indicator: "border-amber-500/40 text-amber-500 dark:text-amber-400 bg-zinc-900",
+      icon: "text-amber-500 dark:text-amber-400",
     },
     blue: {
-      indicator: 'border-blue-500/40 text-blue-500 dark:text-blue-400 bg-zinc-900',
-      icon: 'text-blue-500 dark:text-blue-400'
+      indicator: "border-blue-500/40 text-blue-500 dark:text-blue-400 bg-zinc-900",
+      icon: "text-blue-500 dark:text-blue-400",
     },
     emerald: {
-      indicator: 'border-emerald-500/40 text-emerald-500 dark:text-emerald-400 bg-zinc-900',
-      icon: 'text-emerald-500 dark:text-emerald-400'
-    }
+      indicator: "border-emerald-500/40 text-emerald-500 dark:text-emerald-400 bg-zinc-900",
+      icon: "text-emerald-500 dark:text-emerald-400",
+    },
   };
 
   const currentAccent = accentStyles[accentColor] || accentStyles.emerald;
@@ -120,7 +120,7 @@ export default function PullToRefresh({
         className="absolute left-0 right-0 top-0 z-20 pointer-events-none flex items-center justify-center transition-transform duration-200 ease-out"
         style={{
           transform: `translate3d(0, ${pullDistance > 0 || isRefreshing ? pullDistance - 38 : -48}px, 0)`,
-          opacity: pullDistance > 10 || isRefreshing ? 1 : 0
+          opacity: pullDistance > 10 || isRefreshing ? 1 : 0,
         }}
       >
         <div
@@ -132,7 +132,7 @@ export default function PullToRefresh({
             <ArrowDown
               className={`w-4 h-4 transition-transform duration-200 ${currentAccent.icon}`}
               style={{
-                transform: `rotate(${isReady ? 180 : progressRatio * 180}deg)`
+                transform: `rotate(${isReady ? 180 : progressRatio * 180}deg)`,
               }}
             />
           )}
@@ -143,7 +143,8 @@ export default function PullToRefresh({
       <div
         className="w-full min-h-full flex flex-col transition-transform duration-200 ease-out"
         style={{
-          transform: pullDistance > 0 || isRefreshing ? `translate3d(0, ${pullDistance}px, 0)` : 'none'
+          transform:
+            pullDistance > 0 || isRefreshing ? `translate3d(0, ${pullDistance}px, 0)` : "none",
         }}
       >
         {children}

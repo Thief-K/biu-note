@@ -1,12 +1,12 @@
-import { useState, useEffect, useMemo, useRef, type FormEvent } from 'react';
-import diff_match_patch from 'diff-match-patch';
-import { Sparkles, Check, X, RotateCw, Tag, Eye, History, FileText } from 'lucide-react';
-import { useI18n } from '../i18n';
-import { apiFetch } from '../utils/api';
-import AlertBanner from './common/AlertBanner';
-import IconButton from './common/IconButton';
-import { TagList } from './common/TagBadge';
-import type { DiffData } from '../types';
+import { useState, useEffect, useMemo, useRef, type FormEvent } from "react";
+import diff_match_patch from "diff-match-patch";
+import { Sparkles, Check, X, RotateCw, Tag, Eye, History, FileText } from "lucide-react";
+import { useI18n } from "../i18n";
+import { apiFetch } from "../utils/api";
+import AlertBanner from "./common/AlertBanner";
+import IconButton from "./common/IconButton";
+import { TagList } from "./common/TagBadge";
+import type { DiffData } from "../types";
 
 export interface DiffModalCommitPayload {
   filepath: string;
@@ -24,37 +24,37 @@ const dmp = new diff_match_patch();
 
 export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps) {
   const { t } = useI18n();
-  const [editedTitle, setEditedTitle] = useState(data.proposed_title || '');
-  const [editedContent, setEditedContent] = useState(data.diff_content || '');
+  const [editedTitle, setEditedTitle] = useState(data.proposed_title || "");
+  const [editedContent, setEditedContent] = useState(data.diff_content || "");
   const [tags, setTags] = useState<string[]>(() => data.proposed_tags || []);
 
   // Mobile segmented view tab ('proposed' vs 'original')
-  const [mobileTab, setMobileTab] = useState<'proposed' | 'original'>('proposed');
+  const [mobileTab, setMobileTab] = useState<"proposed" | "original">("proposed");
 
   // Interactive refining inside the modal
-  const [refineMemo, setRefineMemo] = useState('');
+  const [refineMemo, setRefineMemo] = useState("");
   const [refining, setRefining] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [currentData, setCurrentData] = useState<DiffData>(data);
 
   useEffect(() => {
     setCurrentData(data);
-    setEditedTitle(data.proposed_title || '');
-    setEditedContent(data.diff_content || '');
+    setEditedTitle(data.proposed_title || "");
+    setEditedContent(data.diff_content || "");
     setTags(data.proposed_tags || []);
   }, [data]);
 
   // Synchronized scrolling refs with active pane tracking
   const leftScrollRef = useRef<HTMLDivElement | null>(null);
   const rightScrollRef = useRef<HTMLDivElement | null>(null);
-  const activePaneRef = useRef<'left' | 'right' | null>(null);
+  const activePaneRef = useRef<"left" | "right" | null>(null);
 
   // Synchronized scrolling handler
-  const handleScroll = (source: 'left' | 'right') => {
+  const handleScroll = (source: "left" | "right") => {
     if (activePaneRef.current && activePaneRef.current !== source) return;
 
-    const sourceEl = source === 'left' ? leftScrollRef.current : rightScrollRef.current;
-    const targetEl = source === 'left' ? rightScrollRef.current : leftScrollRef.current;
+    const sourceEl = source === "left" ? leftScrollRef.current : rightScrollRef.current;
+    const targetEl = source === "left" ? rightScrollRef.current : leftScrollRef.current;
 
     if (!sourceEl || !targetEl) return;
 
@@ -72,7 +72,7 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
 
   // Compute Diffs with memoization using module-level diff-match-patch
   const diffs = useMemo(() => {
-    const d = dmp.diff_main(currentData?.original_content || '', editedContent || '');
+    const d = dmp.diff_main(currentData?.original_content || "", editedContent || "");
     dmp.diff_cleanupSemantic(d);
     return d;
   }, [currentData?.original_content, editedContent]);
@@ -81,18 +81,28 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
   const renderDiffPane = (isProposed: boolean) => {
     return diffs.map(([type, text], index) => {
       if (type === 0) {
-        return <span key={index} className={isProposed ? 'text-zinc-200' : 'text-zinc-400'}>{text}</span>;
+        return (
+          <span key={index} className={isProposed ? "text-zinc-200" : "text-zinc-400"}>
+            {text}
+          </span>
+        );
       }
       if (!isProposed && type === -1) {
         return (
-          <span key={index} className="bg-red-500/20 text-red-300 line-through px-0.5 border border-red-500/30 rounded">
+          <span
+            key={index}
+            className="bg-red-500/20 text-red-300 line-through px-0.5 border border-red-500/30 rounded"
+          >
             {text}
           </span>
         );
       }
       if (isProposed && type === 1) {
         return (
-          <span key={index} className="bg-emerald-500/25 text-emerald-300 px-0.5 border border-emerald-500/30 rounded font-medium">
+          <span
+            key={index}
+            className="bg-emerald-500/25 text-emerald-300 px-0.5 border border-emerald-500/30 rounded font-medium"
+          >
             {text}
           </span>
         );
@@ -107,22 +117,22 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
     if (!refineMemo.trim()) return;
 
     setRefining(true);
-    setError('');
+    setError("");
 
     try {
-      const response = await apiFetch('/api/ai/process', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await apiFetch("/api/ai/process", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           filepath: currentData.target_file,
           content: editedContent,
-          memo: refineMemo.trim()
-        })
+          memo: refineMemo.trim(),
+        }),
       });
 
       if (!response.ok) {
         const errData = await response.json();
-        throw new Error(errData.error || t('chat.error'));
+        throw new Error(errData.error || t("chat.error"));
       }
 
       const resData = (await response.json()) as DiffData;
@@ -131,12 +141,12 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
         original_content: editedContent,
         diff_content: resData.diff_content,
         proposed_title: resData.proposed_title || prev.proposed_title,
-        proposed_tags: resData.proposed_tags || prev.proposed_tags
+        proposed_tags: resData.proposed_tags || prev.proposed_tags,
       }));
       if (resData.diff_content !== undefined) setEditedContent(resData.diff_content);
       if (resData.proposed_title) setEditedTitle(resData.proposed_title);
       if (resData.proposed_tags) setTags(resData.proposed_tags);
-      setRefineMemo('');
+      setRefineMemo("");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       setError(msg);
@@ -153,14 +163,14 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
 
   const handleSave = () => {
     let targetFile = editedTitle.trim();
-    if (!targetFile.endsWith('.md')) {
-      targetFile += '.md';
+    if (!targetFile.endsWith(".md")) {
+      targetFile += ".md";
     }
 
     onConfirm({
       filepath: targetFile,
       content: editedContent,
-      tags
+      tags,
     });
   };
 
@@ -169,33 +179,33 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
       <div className="w-full max-w-6xl h-[92vh] bg-zinc-900 border border-zinc-750 rounded-2xl flex flex-col overflow-hidden animate-slide-up shadow-2xl">
         {/* 1. Modal Header Banner */}
         {(() => {
-          const isMerge = currentData?.action === 'merge';
+          const isMerge = currentData?.action === "merge";
           return (
             <div
               className={`px-4 sm:px-6 py-3.5 flex items-center justify-between shrink-0 select-none ${
                 isMerge
-                  ? 'bg-blue-500/10 border-b border-blue-500/20'
-                  : 'bg-emerald-500/10 border-b border-emerald-500/20'
+                  ? "bg-blue-500/10 border-b border-blue-500/20"
+                  : "bg-emerald-500/10 border-b border-emerald-500/20"
               }`}
             >
               <div className="flex items-center gap-3">
                 <div
                   className={`w-8 h-8 rounded-xl flex items-center justify-center border shrink-0 ${
                     isMerge
-                      ? 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-                      : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                      ? "bg-blue-500/20 text-blue-400 border-blue-500/30"
+                      : "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
                   }`}
                 >
                   <Sparkles className="w-4 h-4 animate-pulse" />
                 </div>
                 <div>
                   <h3 className="font-bold text-zinc-100 text-sm flex items-center gap-1.5">
-                    <span>{isMerge ? t('diff.mergeTitle') : t('diff.newTitle')}</span>
+                    <span>{isMerge ? t("diff.mergeTitle") : t("diff.newTitle")}</span>
                   </h3>
                   <p className="text-[11px] text-zinc-400 font-mono truncate max-w-xs sm:max-w-md">
                     {isMerge
-                      ? t('diff.targetFile', { file: currentData.target_file || '' })
-                      : t('diff.createFlat')}
+                      ? t("diff.targetFile", { file: currentData.target_file || "" })
+                      : t("diff.createFlat")}
                   </p>
                 </div>
               </div>
@@ -215,13 +225,13 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
           <div className="flex items-center gap-2">
             <span className="text-[11px] font-semibold text-zinc-500 shrink-0 select-none flex items-center gap-1">
               <FileText className="w-3 h-3 text-blue-400" />
-              <span>{t('notes.title')}:</span>
+              <span>{t("notes.title")}:</span>
             </span>
             <input
               type="text"
               value={editedTitle}
               onChange={(e) => setEditedTitle(e.target.value)}
-              placeholder={t('notes.title')}
+              placeholder={t("notes.title")}
               className="flex-1 bg-zinc-900 border border-zinc-750 focus:border-emerald-500/60 rounded-xl px-3 py-1.5 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none transition-colors"
             />
           </div>
@@ -229,7 +239,7 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
           <div className="flex items-center gap-2 flex-wrap min-h-[32px]">
             <span className="text-[11px] font-semibold text-zinc-500 shrink-0 select-none flex items-center gap-1">
               <Tag className="w-3 h-3 text-emerald-400" />
-              <span>{t('common.tag')}:</span>
+              <span>{t("common.tag")}:</span>
             </span>
 
             <TagList
@@ -242,32 +252,32 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
         </div>
 
         {/* 3. Mobile View Segmented Switcher */}
-        {currentData.action === 'merge' && (
+        {currentData.action === "merge" && (
           <div className="md:hidden flex items-center border-b border-zinc-800 bg-zinc-950/60 p-1.5 shrink-0">
             <div className="grid grid-cols-2 gap-1 w-full">
               <button
                 type="button"
-                onClick={() => setMobileTab('proposed')}
+                onClick={() => setMobileTab("proposed")}
                 className={`py-1.5 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                  mobileTab === 'proposed'
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-                    : 'text-zinc-400 hover:text-zinc-200'
+                  mobileTab === "proposed"
+                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
+                    : "text-zinc-400 hover:text-zinc-200"
                 }`}
               >
                 <Eye className="w-3.5 h-3.5" />
-                <span>{t('diff.proposed')}</span>
+                <span>{t("diff.proposed")}</span>
               </button>
               <button
                 type="button"
-                onClick={() => setMobileTab('original')}
+                onClick={() => setMobileTab("original")}
                 className={`py-1.5 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                  mobileTab === 'original'
-                    ? 'bg-zinc-800 text-zinc-200 border border-zinc-700'
-                    : 'text-zinc-400 hover:text-zinc-200'
+                  mobileTab === "original"
+                    ? "bg-zinc-800 text-zinc-200 border border-zinc-700"
+                    : "text-zinc-400 hover:text-zinc-200"
                 }`}
               >
                 <History className="w-3.5 h-3.5" />
-                <span>{t('diff.original')}</span>
+                <span>{t("diff.original")}</span>
               </button>
             </div>
           </div>
@@ -275,22 +285,22 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
 
         {/* 4. Dual Column Diff / Editor View */}
         <div className="flex-1 flex overflow-hidden bg-zinc-950/30">
-          {currentData.action === 'merge' ? (
+          {currentData.action === "merge" ? (
             <div className="flex-1 flex flex-col md:grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-zinc-800 h-full overflow-hidden">
               <div
                 className={`flex-col h-full overflow-hidden ${
-                  mobileTab === 'original' ? 'flex' : 'hidden md:flex'
+                  mobileTab === "original" ? "flex" : "hidden md:flex"
                 }`}
               >
                 <div className="px-4 py-2 border-b border-zinc-800/80 bg-zinc-900/60 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider select-none flex items-center justify-between">
-                  <span>{t('diff.original')}</span>
+                  <span>{t("diff.original")}</span>
                 </div>
                 <div
                   ref={leftScrollRef}
                   onPointerEnter={() => {
-                    activePaneRef.current = 'left';
+                    activePaneRef.current = "left";
                   }}
-                  onScroll={() => handleScroll('left')}
+                  onScroll={() => handleScroll("left")}
                   className="flex-1 p-4 sm:p-5 overflow-y-auto font-mono text-xs whitespace-pre-wrap select-text leading-relaxed text-zinc-400"
                 >
                   {renderDiffPane(false)}
@@ -299,18 +309,18 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
 
               <div
                 className={`flex-col h-full overflow-hidden ${
-                  mobileTab === 'proposed' ? 'flex' : 'hidden md:flex'
+                  mobileTab === "proposed" ? "flex" : "hidden md:flex"
                 }`}
               >
                 <div className="px-4 py-2 border-b border-zinc-800/80 bg-zinc-900/60 text-[11px] font-semibold text-emerald-400 uppercase tracking-wider select-none flex items-center justify-between">
-                  <span>{t('diff.proposed')}</span>
+                  <span>{t("diff.proposed")}</span>
                 </div>
                 <div
                   ref={rightScrollRef}
                   onPointerEnter={() => {
-                    activePaneRef.current = 'right';
+                    activePaneRef.current = "right";
                   }}
-                  onScroll={() => handleScroll('right')}
+                  onScroll={() => handleScroll("right")}
                   className="flex-1 p-4 sm:p-5 overflow-y-auto font-mono text-xs whitespace-pre-wrap select-text leading-relaxed bg-zinc-900/15"
                 >
                   {renderDiffPane(true)}
@@ -320,7 +330,7 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
           ) : (
             <div className="flex-1 flex flex-col h-full overflow-hidden">
               <div className="px-4 py-2 border-b border-zinc-800/80 bg-zinc-900/60 text-[11px] font-semibold text-emerald-400 uppercase tracking-wider select-none">
-                {t('diff.newContentPreview')}
+                {t("diff.newContentPreview")}
               </div>
               <div className="flex-1 p-5 overflow-y-auto">
                 <textarea
@@ -338,13 +348,10 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
           {error && <AlertBanner variant="error" message={error} />}
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <form
-              onSubmit={handleRefine}
-              className="flex-1 flex items-center gap-2"
-            >
+            <form onSubmit={handleRefine} className="flex-1 flex items-center gap-2">
               <input
                 type="text"
-                placeholder={t('diff.refinePrompt')}
+                placeholder={t("diff.refinePrompt")}
                 value={refineMemo}
                 onChange={(e) => setRefineMemo(e.target.value)}
                 disabled={refining}
@@ -357,7 +364,7 @@ export default function DiffModal({ data, onCancel, onConfirm }: DiffModalProps)
                 disabled={refining || !refineMemo.trim()}
                 size="md"
                 shape="rounded-xl"
-                variant={refineMemo.trim() && !refining ? 'primary' : 'default'}
+                variant={refineMemo.trim() && !refining ? "primary" : "default"}
               />
             </form>
 

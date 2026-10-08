@@ -4,7 +4,7 @@
 
 **[English](README.md)** | **[中文](README_zh.md)**
 
-*专为个人打造的纯粹 Markdown 笔记应用，深度集成 AI 辅助与知识对话*
+_专为个人打造的纯粹 Markdown 笔记应用，深度集成 AI 辅助与知识对话_
 
 </div>
 
@@ -41,7 +41,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - LOGIN_TOKEN=your-secret-token     # 自定义 Web 登录口令
+      - LOGIN_TOKEN=your-secret-token # 自定义 Web 登录口令
       - TZ=Asia/Shanghai
     volumes:
       - ./notes:/app/notes
@@ -62,33 +62,37 @@ docker compose up -d
 当发布新版本时，无需重新上传源码或重新构建，只需在服务器的 `docker-compose.yml` 所在目录执行：
 
 ### 方式 A：手动一键拉取更新（推荐）
+
 ```bash
 docker compose pull && docker compose up -d
 ```
+
 > Docker 将自动拉取最新的代码层并平滑重启容器，数据完全保留在 `./notes` 目录中，数秒内即可完成升级。
 
 ### 方式 B：全自动静默热更新（Watchtower）
+
 如需实现完全无人值守的自动化升级，可在 `docker-compose.yml` 中追加 `watchtower` 服务：
+
 ```yaml
-  watchtower:
-    image: containrrr/watchtower
-    container_name: biunote-watchtower
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 3600 --cleanup biunote
+watchtower:
+  image: containrrr/watchtower
+  container_name: biunote-watchtower
+  restart: unless-stopped
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+  command: --interval 3600 --cleanup biunote
 ```
 
 ---
 
 ## ⚙️ 环境变量说明
 
-| 环境变量 | 默认值 | 说明 |
-| :--- | :--- | :--- |
-| `PORT` | `3000` | 后端服务监听端口 |
-| `NOTES_DIR` | `/app/notes` | 笔记与元数据持久化存储目录 |
+| 环境变量      | 默认值                 | 说明                                   |
+| :------------ | :--------------------- | :------------------------------------- |
+| `PORT`        | `3000`                 | 后端服务监听端口                       |
+| `NOTES_DIR`   | `/app/notes`           | 笔记与元数据持久化存储目录             |
 | `LOGIN_TOKEN` | `biunote-secret-token` | Web 端访问口令（建议生产环境务必修改） |
-| `TZ` | `Asia/Shanghai` | 容器时区设置 |
+| `TZ`          | `Asia/Shanghai`        | 容器时区设置                           |
 
 > 提示：AI 相关配置（API Key、Base URL、模型参数）统一在 Web 端**「设置」**页面中管理，并自动持久化保存在本地 `notes/.biunote/config.json` 中。
 

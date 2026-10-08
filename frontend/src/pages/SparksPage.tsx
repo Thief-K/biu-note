@@ -1,18 +1,18 @@
-import { useState, useMemo } from 'react';
-import { Lightbulb, Search, Trash2, Edit3, Clock, Plus } from 'lucide-react';
-import { useNotesStore } from '../stores/notesStore';
-import { useModalStore } from '../stores/modalStore';
-import { apiFetch } from '../utils/api';
-import { useI18n } from '../i18n';
-import { formatDate } from '../utils/date';
-import PageHeader from '../components/common/PageHeader';
-import SearchFilterBar from '../components/common/SearchFilterBar';
-import EmptyState from '../components/common/EmptyState';
-import IconButton from '../components/common/IconButton';
-import ContentContainer from '../components/common/ContentContainer';
-import PullToRefresh from '../components/common/PullToRefresh';
-import { TagList } from '../components/common/TagBadge';
-import type { SparkItem } from '../types';
+import { useState, useMemo } from "react";
+import { Lightbulb, Search, Trash2, Edit3, Clock, Plus } from "lucide-react";
+import { useNotesStore } from "../stores/notesStore";
+import { useModalStore } from "../stores/modalStore";
+import { apiFetch } from "../utils/api";
+import { useI18n } from "../i18n";
+import { formatDate } from "../utils/date";
+import PageHeader from "../components/common/PageHeader";
+import SearchFilterBar from "../components/common/SearchFilterBar";
+import EmptyState from "../components/common/EmptyState";
+import IconButton from "../components/common/IconButton";
+import ContentContainer from "../components/common/ContentContainer";
+import PullToRefresh from "../components/common/PullToRefresh";
+import { TagList } from "../components/common/TagBadge";
+import type { SparkItem } from "../types";
 
 export default function SparksPage() {
   const sparks = useNotesStore((s) => s.sparks);
@@ -20,12 +20,15 @@ export default function SparksPage() {
   const showConfirm = useModalStore((s) => s.showConfirm);
   const openSparkModal = useModalStore((s) => s.openSparkModal);
   const { t } = useI18n();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTag, setSelectedTag] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTag, setSelectedTag] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(false);
 
   // Collect all unique tags in sparks
-  const sparkTags = useMemo(() => Array.from(new Set(sparks.flatMap((s) => s.tags || []))), [sparks]);
+  const sparkTags = useMemo(
+    () => Array.from(new Set(sparks.flatMap((s) => s.tags || []))),
+    [sparks],
+  );
 
   // Filtered sparks
   const filteredSparks = useMemo(() => {
@@ -40,18 +43,18 @@ export default function SparksPage() {
 
   // Handle Delete Spark
   const handleDeleteSpark = (spark: SparkItem) => {
-    showConfirm(t('sparks.deleteConfirm'), async () => {
+    showConfirm(t("sparks.deleteConfirm"), async () => {
       try {
-        const res = await apiFetch('/api/sparks', {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ filepath: spark.filepath })
+        const res = await apiFetch("/api/sparks", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ filepath: spark.filepath }),
         });
         if (res.ok) {
           await fetchNotes();
         }
       } catch (err: unknown) {
-        console.error('Failed to delete spark:', err);
+        console.error("Failed to delete spark:", err);
       }
     });
   };
@@ -62,7 +65,7 @@ export default function SparksPage() {
       <PageHeader
         icon={Lightbulb}
         iconClassName="bg-amber-500/10 border-amber-500/20 text-amber-500 dark:text-amber-400"
-        title={t('sparks.title')}
+        title={t("sparks.title")}
         count={filteredSparks.length}
         countClassName="bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30"
         actions={
@@ -70,12 +73,12 @@ export default function SparksPage() {
             <IconButton
               icon={Search}
               size="md"
-              variant={isSearchVisible || searchQuery || selectedTag ? 'amber' : 'default'}
+              variant={isSearchVisible || searchQuery || selectedTag ? "amber" : "default"}
               onClick={() => {
                 setIsSearchVisible((prev) => !prev);
                 if (isSearchVisible) {
-                  setSearchQuery('');
-                  setSelectedTag('');
+                  setSearchQuery("");
+                  setSelectedTag("");
                 }
               }}
             />
@@ -96,7 +99,7 @@ export default function SparksPage() {
             selectedTag={selectedTag}
             onTagSelect={setSelectedTag}
             tags={sparkTags}
-            placeholder={t('sparks.searchPlaceholder')}
+            placeholder={t("sparks.searchPlaceholder")}
             accentColor="amber"
           />
         )}
@@ -111,7 +114,7 @@ export default function SparksPage() {
         <ContentContainer>
           {/* Sparks Cards List */}
           {filteredSparks.length === 0 ? (
-            <EmptyState icon={Lightbulb} title={t('sparks.empty')} />
+            <EmptyState icon={Lightbulb} title={t("sparks.empty")} />
           ) : (
             filteredSparks.map((spark) => (
               <div

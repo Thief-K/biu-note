@@ -1,6 +1,6 @@
-import { NavLink } from 'react-router-dom';
-import { Lightbulb, FileText, Zap, Bot, Settings } from 'lucide-react';
-import { useModalStore } from '../../stores/modalStore';
+import { NavLink } from "react-router-dom";
+import { Lightbulb, FileText, Zap, Bot, Settings } from "lucide-react";
+import { useModalStore } from "../../stores/modalStore";
 
 export default function FloatingPillNav() {
   const openAiMemo = useModalStore((s) => s.openAiMemo);
@@ -17,8 +17,8 @@ export default function FloatingPillNav() {
           className={({ isActive }) =>
             `w-10 h-10 rounded-full grid place-items-center shrink-0 transition-all cursor-pointer border ${
               isActive
-                ? 'bg-amber-500/20 text-amber-500 dark:text-amber-400 border-amber-500/60'
-                : 'text-zinc-400 border-transparent hover:text-amber-500 dark:hover:text-amber-400 hover:bg-zinc-850'
+                ? "bg-amber-500/20 text-amber-500 dark:text-amber-400 border-amber-500/60"
+                : "text-zinc-400 border-transparent hover:text-amber-500 dark:hover:text-amber-400 hover:bg-zinc-850"
             }`
           }
         >
@@ -31,8 +31,8 @@ export default function FloatingPillNav() {
           className={({ isActive }) =>
             `w-10 h-10 rounded-full grid place-items-center shrink-0 transition-all cursor-pointer border ${
               isActive
-                ? 'bg-blue-500/20 text-blue-500 dark:text-blue-400 border-blue-500/60'
-                : 'text-zinc-400 border-transparent hover:text-blue-500 dark:hover:text-blue-400 hover:bg-zinc-850'
+                ? "bg-blue-500/20 text-blue-500 dark:text-blue-400 border-blue-500/60"
+                : "text-zinc-400 border-transparent hover:text-blue-500 dark:hover:text-blue-400 hover:bg-zinc-850"
             }`
           }
         >
@@ -54,8 +54,8 @@ export default function FloatingPillNav() {
           className={({ isActive }) =>
             `w-10 h-10 rounded-full grid place-items-center shrink-0 transition-all cursor-pointer border ${
               isActive
-                ? 'bg-purple-500/20 text-purple-500 dark:text-purple-400 border-purple-500/60'
-                : 'text-zinc-400 border-transparent hover:text-purple-500 dark:hover:text-purple-400 hover:bg-zinc-850'
+                ? "bg-purple-500/20 text-purple-500 dark:text-purple-400 border-purple-500/60"
+                : "text-zinc-400 border-transparent hover:text-purple-500 dark:hover:text-purple-400 hover:bg-zinc-850"
             }`
           }
         >
@@ -68,8 +68,8 @@ export default function FloatingPillNav() {
           className={({ isActive }) =>
             `w-10 h-10 rounded-full grid place-items-center shrink-0 transition-all cursor-pointer border ${
               isActive
-                ? 'bg-zinc-800 text-zinc-100 border-zinc-600'
-                : 'text-zinc-400 border-transparent hover:text-zinc-100 hover:bg-zinc-850'
+                ? "bg-zinc-800 text-zinc-100 border-zinc-600"
+                : "text-zinc-400 border-transparent hover:text-zinc-100 hover:bg-zinc-850"
             }`
           }
         >

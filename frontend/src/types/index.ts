@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react';
+import type { ComponentType } from "react";
 
 export interface NoteItem {
   filepath: string;
@@ -23,7 +23,7 @@ export interface HeadingItem {
 }
 
 export interface DiffData {
-  action: 'create' | 'merge' | string;
+  action: "create" | "merge" | string;
   target_file?: string;
   proposed_title?: string;
   proposed_tags?: string[];
@@ -34,13 +34,13 @@ export interface DiffData {
 export interface CandidateNote {
   filepath: string;
   title: string;
-  type: 'spark' | 'note';
+  type: "spark" | "note";
   content: string;
   tags: string[];
 }
 
 export interface ChatMessage {
-  role: 'assistant' | 'user' | 'system' | string;
+  role: "assistant" | "user" | "system" | string;
   content: string;
   referencedNotes?: CandidateNote[] | null;
 }

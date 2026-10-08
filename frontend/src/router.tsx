@@ -1,14 +1,14 @@
-import type { ReactNode } from 'react';
-import { createBrowserRouter, Navigate } from 'react-router-dom';
-import AppLayout from './components/layout/AppLayout';
-import SparksPage from './pages/SparksPage';
-import NotesPage from './pages/NotesPage';
-import NoteDetailPage from './pages/NoteDetailPage';
-import ChatPage from './pages/ChatPage';
-import SettingsPage from './pages/SettingsPage';
-import LoginPage from './pages/LoginPage';
-import NotFoundPage from './pages/NotFoundPage';
-import { useAuthStore } from './stores/authStore';
+import type { ReactNode } from "react";
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import AppLayout from "./components/layout/AppLayout";
+import SparksPage from "./pages/SparksPage";
+import NotesPage from "./pages/NotesPage";
+import NoteDetailPage from "./pages/NoteDetailPage";
+import ChatPage from "./pages/ChatPage";
+import SettingsPage from "./pages/SettingsPage";
+import LoginPage from "./pages/LoginPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import { useAuthStore } from "./stores/authStore";
 
 // Route guard requiring authentication
 function ProtectedRoute({ children }: { children: ReactNode }) {
@@ -30,15 +30,15 @@ function PublicRoute({ children }: { children: ReactNode }) {
 
 export const router = createBrowserRouter([
   {
-    path: '/login',
+    path: "/login",
     element: (
       <PublicRoute>
         <LoginPage />
       </PublicRoute>
-    )
+    ),
   },
   {
-    path: '/',
+    path: "/",
     element: (
       <ProtectedRoute>
         <AppLayout />
@@ -47,32 +47,32 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/sparks" replace />
+        element: <Navigate to="/sparks" replace />,
       },
       {
-        path: 'sparks',
-        element: <SparksPage />
+        path: "sparks",
+        element: <SparksPage />,
       },
       {
-        path: 'notes',
-        element: <NotesPage />
+        path: "notes",
+        element: <NotesPage />,
       },
       {
-        path: 'notes/:filepath',
-        element: <NoteDetailPage />
+        path: "notes/:filepath",
+        element: <NoteDetailPage />,
       },
       {
-        path: 'chat',
-        element: <ChatPage />
+        path: "chat",
+        element: <ChatPage />,
       },
       {
-        path: 'settings',
-        element: <SettingsPage />
-      }
-    ]
+        path: "settings",
+        element: <SettingsPage />,
+      },
+    ],
   },
   {
-    path: '*',
-    element: <NotFoundPage />
-  }
+    path: "*",
+    element: <NotFoundPage />,
+  },
 ]);

@@ -1,8 +1,8 @@
-﻿import { createServer } from 'vite';
+﻿import { createServer } from "vite";
 
 const server = await createServer({
   server: { middlewareMode: true },
-  appType: 'custom'
+  appType: "custom",
 });
 
-await server.ssrLoadModule('./server.ts');
+await server.ssrLoadModule("./server.ts");

@@ -1,4 +1,4 @@
-import { useAuthStore } from '../stores/authStore';
+import { useAuthStore } from "../stores/authStore";
 
 /**
  * 封装后的 Authenticated Fetch 工具函数
@@ -8,12 +8,12 @@ export async function apiFetch(url: string, options: RequestInit = {}): Promise<
   const token = useAuthStore.getState().token;
   const headers = new Headers(options.headers || {});
   if (token) {
-    headers.set('Authorization', `Bearer ${token}`);
+    headers.set("Authorization", `Bearer ${token}`);
   }
 
   const res = await fetch(url, {
     ...options,
-    headers
+    headers,
   });
 
   if (res.status === 401) {

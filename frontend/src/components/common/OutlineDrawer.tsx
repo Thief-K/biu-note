@@ -1,7 +1,7 @@
-import { ListTree, X } from 'lucide-react';
-import { useI18n } from '../../i18n';
-import IconButton from './IconButton';
-import type { HeadingItem } from '../../types';
+import { ListTree, X } from "lucide-react";
+import { useI18n } from "../../i18n";
+import IconButton from "./IconButton";
+import type { HeadingItem } from "../../types";
 
 export interface OutlineDrawerProps {
   isOpen: boolean;
@@ -18,7 +18,7 @@ export default function OutlineDrawer({
   isOpen,
   onClose,
   headings = [],
-  onSelectHeading
+  onSelectHeading,
 }: OutlineDrawerProps) {
   const { t } = useI18n();
 
@@ -40,23 +40,15 @@ export default function OutlineDrawer({
         <div className="h-14 px-5 flex items-center justify-between border-b border-zinc-800/80 shrink-0 bg-zinc-900/90 backdrop-blur-md">
           <div className="flex items-center gap-2 text-xs font-semibold text-zinc-200">
             <ListTree className="w-4 h-4 text-emerald-400" />
-            <span>{t('editor.outline')}</span>
+            <span>{t("editor.outline")}</span>
           </div>
-          <IconButton
-            icon={X}
-            variant="ghost"
-            size="xs"
-            shape="rounded-lg"
-            onClick={onClose}
-          />
+          <IconButton icon={X} variant="ghost" size="xs" shape="rounded-lg" onClick={onClose} />
         </div>
 
         {/* 2. Scrollable Body Content */}
         <div className="flex-1 overflow-y-auto p-4 space-y-1.5">
           {validHeadings.length === 0 ? (
-            <div className="py-8 text-center text-xs text-zinc-500">
-              {t('editor.noHeadings')}
-            </div>
+            <div className="py-8 text-center text-xs text-zinc-500">{t("editor.noHeadings")}</div>
           ) : (
             validHeadings.map((h, i) => (
               <button

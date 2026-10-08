@@ -1,10 +1,10 @@
-import crypto from 'node:crypto';
-import path from 'node:path';
-import { format } from 'oxfmt';
+import crypto from "node:crypto";
+import path from "node:path";
+import { format } from "oxfmt";
 
 // Compute MD5 hash using Node.js built-in crypto.hash
 export const getHash = (content: string | undefined | null): string => {
-  return crypto.hash('md5', content || '', 'hex');
+  return crypto.hash("md5", content || "", "hex");
 };
 
 // Extracts tags from Frontmatter or inline Markdown #tags
@@ -17,8 +17,8 @@ export const extractTags = (content: string | undefined | null): string[] => {
   if (frontmatterMatch) {
     const tagMatch = frontmatterMatch[1].match(/(?:tags\s*:\s*\[?)([^\]\r\n]+)/i);
     if (tagMatch) {
-      tagMatch[1].split(',').forEach((t) => {
-        const clean = t.trim().replace(/^['"]|['"]$/g, '');
+      tagMatch[1].split(",").forEach((t) => {
+        const clean = t.trim().replace(/^['"]|['"]$/g, "");
         if (clean) tags.add(clean);
       });
     }
@@ -26,7 +26,7 @@ export const extractTags = (content: string | undefined | null): string[] => {
 
   // 2. Parse inline tags (excluding code blocks)
   const body = frontmatterMatch ? content.slice(frontmatterMatch[0].length) : content;
-  const cleanBody = body.replace(/```[\s\S]*?```|`[^`]*`/g, '');
+  const cleanBody = body.replace(/```[\s\S]*?```|`[^`]*`/g, "");
   const tagRegex = /#([\w\u4e00-\u9fa5-_]+)/g;
   let match: RegExpExecArray | null;
   while ((match = tagRegex.exec(cleanBody)) !== null) {
@@ -38,43 +38,43 @@ export const extractTags = (content: string | undefined | null): string[] => {
 
 // Strips YAML frontmatter and hashtag-only lines completely to store 100% pure Markdown content
 export const cleanContentPureMarkdown = (content: string | undefined | null): string => {
-  if (!content) return '\n';
+  if (!content) return "\n";
   return (
     content
-      .replace(/^---\r?\n[\s\S]*?\r?\n---/, '')
-      .replace(/^\s*(?:#[\w\u4e00-\u9fa5-_]+\s*)+$/gm, '')
-      .trim() + '\n'
+      .replace(/^---\r?\n[\s\S]*?\r?\n---/, "")
+      .replace(/^\s*(?:#[\w\u4e00-\u9fa5-_]+\s*)+$/gm, "")
+      .trim() + "\n"
   );
 };
 
 // Extract title from markdown content (first H1 line)
 export const extractTitleFromContent = (text: string | undefined | null): string => {
-  if (!text) return '';
-  const lines = text.split('\n');
+  if (!text) return "";
+  const lines = text.split("\n");
   for (const line of lines) {
     const trimmed = line.trim();
-    if (trimmed.startsWith('# ')) {
-      return trimmed.replace('# ', '').trim();
+    if (trimmed.startsWith("# ")) {
+      return trimmed.replace("# ", "").trim();
     } else if (trimmed) {
       return trimmed; // Fallback to first non-empty line
     }
   }
-  return '';
+  return "";
 };
 
 // Safe filepath resolver to prevent path traversal
 export const getSafeRelativePath = (filepath: string): string => {
-  const normalized = filepath.replace(/\\/g, '/');
-  if (normalized.includes('..') || path.isAbsolute(normalized)) {
-    throw new Error('Invalid filepath format or path traversal attempt.');
+  const normalized = filepath.replace(/\\/g, "/");
+  if (normalized.includes("..") || path.isAbsolute(normalized)) {
+    throw new Error("Invalid filepath format or path traversal attempt.");
   }
   return normalized;
 };
 
 // Check if file is a spark or task
 export const isSparkOrTask = (filepath: string | undefined | null): boolean => {
-  const normalized = (filepath || '').replace(/\\/g, '/');
-  return normalized.includes('sparks/') || normalized.includes('tasks/');
+  const normalized = (filepath || "").replace(/\\/g, "/");
+  return normalized.includes("sparks/") || normalized.includes("tasks/");
 };
 
 /**
@@ -83,15 +83,15 @@ export const isSparkOrTask = (filepath: string | undefined | null): boolean => {
  */
 export const formatMarkdownContent = async (
   filename: string,
-  content: string | undefined | null
+  content: string | undefined | null,
 ): Promise<string> => {
-  if (!content || !content.trim()) return content || '';
+  if (!content || !content.trim()) return content || "";
   try {
-    const safeFilename = filename.endsWith('.md') ? filename : `${filename}.md`;
+    const safeFilename = filename.endsWith(".md") ? filename : `${filename}.md`;
     const res = await format(safeFilename, content);
     return res.code ?? content;
   } catch (err: unknown) {
-    console.warn('[oxfmt] Failed to format markdown, falling back to original content:', err);
+    console.warn("[oxfmt] Failed to format markdown, falling back to original content:", err);
     return content;
   }
 };

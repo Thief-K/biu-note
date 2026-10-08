@@ -1,7 +1,7 @@
-import { AlertTriangle, Check, Trash2, X } from 'lucide-react';
-import { useModalStore } from '../../stores/modalStore';
-import { useI18n } from '../../i18n';
-import IconButton from '../common/IconButton';
+import { AlertTriangle, Check, Trash2, X } from "lucide-react";
+import { useModalStore } from "../../stores/modalStore";
+import { useI18n } from "../../i18n";
+import IconButton from "../common/IconButton";
 
 export default function ConfirmModal() {
   const confirmDialog = useModalStore((s) => s.confirmDialog);
@@ -10,11 +10,11 @@ export default function ConfirmModal() {
 
   if (!confirmDialog.isOpen) return null;
 
-  const ConfirmIcon = confirmDialog.confirmVariant?.includes('danger')
+  const ConfirmIcon = confirmDialog.confirmVariant?.includes("danger")
     ? Trash2
-    : typeof confirmDialog.confirmIcon === 'function'
-    ? confirmDialog.confirmIcon
-    : Check;
+    : typeof confirmDialog.confirmIcon === "function"
+      ? confirmDialog.confirmIcon
+      : Check;
 
   return (
     <div
@@ -30,10 +30,8 @@ export default function ConfirmModal() {
             <AlertTriangle className="w-5 h-5" />
           </div>
           <div className="flex-1">
-            <h3 className="text-sm font-semibold text-zinc-100">{t('common.tip')}</h3>
-            <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
-              {confirmDialog.message}
-            </p>
+            <h3 className="text-sm font-semibold text-zinc-100">{t("common.tip")}</h3>
+            <p className="text-xs text-zinc-400 mt-1 leading-relaxed">{confirmDialog.message}</p>
           </div>
         </div>
 
@@ -49,7 +47,7 @@ export default function ConfirmModal() {
             icon={ConfirmIcon}
             size="md"
             shape="rounded-xl"
-            variant={confirmDialog.confirmVariant || 'primary-emerald'}
+            variant={confirmDialog.confirmVariant || "primary-emerald"}
             onClick={() => {
               if (confirmDialog.onConfirm) confirmDialog.onConfirm();
             }}

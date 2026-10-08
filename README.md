@@ -4,7 +4,7 @@
 
 **[English](README.md)** | **[中文](README_zh.md)**
 
-*A pure, distraction-free Markdown note-taking app for individuals, supercharged with integrated AI assistance.*
+_A pure, distraction-free Markdown note-taking app for individuals, supercharged with integrated AI assistance._
 
 </div>
 
@@ -41,7 +41,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - LOGIN_TOKEN=your-secret-token     # Set your custom web access token
+      - LOGIN_TOKEN=your-secret-token # Set your custom web access token
       - TZ=Asia/Shanghai
     volumes:
       - ./notes:/app/notes
@@ -62,33 +62,37 @@ Access `http://<your-server-ip>:3000` to start using BiuNote.
 When a new version is released, you do not need to rebuild or re-upload files. Simply run:
 
 ### Method A: Manual Update (Recommended)
+
 ```bash
 docker compose pull && docker compose up -d
 ```
+
 > Docker will pull updated layers and smoothly restart the container in seconds. All data in `./notes` remains untouched.
 
 ### Method B: Automated Updates (Watchtower)
+
 For unattended automatic updates, add the `watchtower` service to `docker-compose.yml`:
+
 ```yaml
-  watchtower:
-    image: containrrr/watchtower
-    container_name: biunote-watchtower
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 3600 --cleanup biunote
+watchtower:
+  image: containrrr/watchtower
+  container_name: biunote-watchtower
+  restart: unless-stopped
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+  command: --interval 3600 --cleanup biunote
 ```
 
 ---
 
 ## ⚙️ Environment Variables
 
-| Variable | Default | Description |
-| :--- | :--- | :--- |
-| `PORT` | `3000` | Server listening port |
-| `NOTES_DIR` | `/app/notes` | Notes and metadata storage path |
+| Variable      | Default                | Description                                                     |
+| :------------ | :--------------------- | :-------------------------------------------------------------- |
+| `PORT`        | `3000`                 | Server listening port                                           |
+| `NOTES_DIR`   | `/app/notes`           | Notes and metadata storage path                                 |
 | `LOGIN_TOKEN` | `biunote-secret-token` | Web access token (strongly recommended to change in production) |
-| `TZ` | `Asia/Shanghai` | Container timezone |
+| `TZ`          | `Asia/Shanghai`        | Container timezone                                              |
 
 > Note: AI configuration (API key, base URL, models) is managed securely via the Web UI **Settings** page and stored in `notes/.biunote/config.json`.
 

@@ -1,12 +1,18 @@
-import { create } from 'zustand';
-import type { ConfirmDialogState, ConfirmOptions, DiffData, SparkItem, SparkModalState } from '../types';
+import { create } from "zustand";
+import type {
+  ConfirmDialogState,
+  ConfirmOptions,
+  DiffData,
+  SparkItem,
+  SparkModalState,
+} from "../types";
 
 const DEFAULT_CONFIRM_STATE: ConfirmDialogState = {
   isOpen: false,
-  message: '',
+  message: "",
   onConfirm: null,
   confirmIcon: null,
-  confirmVariant: 'primary-emerald'
+  confirmVariant: "primary-emerald",
 };
 
 interface ModalState {
@@ -42,18 +48,19 @@ export const useModalStore = create<ModalState>((set) => ({
   // 1. Confirm Dialog
   confirmDialog: DEFAULT_CONFIRM_STATE,
   showConfirm: (message: string, onConfirm?: () => void, options: ConfirmOptions = {}) => {
-    const isDanger = options.danger ?? (typeof message === 'string' && /删除|清空|delete|clear/i.test(message));
+    const isDanger =
+      options.danger ?? (typeof message === "string" && /删除|清空|delete|clear/i.test(message));
     set({
       confirmDialog: {
         isOpen: true,
         message,
-        confirmIcon: options.icon || (isDanger ? 'trash' : 'check'),
-        confirmVariant: options.variant || (isDanger ? 'primary-danger' : 'primary-emerald'),
+        confirmIcon: options.icon || (isDanger ? "trash" : "check"),
+        confirmVariant: options.variant || (isDanger ? "primary-danger" : "primary-emerald"),
         onConfirm: () => {
           if (onConfirm) onConfirm();
           set({ confirmDialog: DEFAULT_CONFIRM_STATE });
-        }
-      }
+        },
+      },
     });
   },
   closeConfirm: () => set({ confirmDialog: DEFAULT_CONFIRM_STATE }),
@@ -66,10 +73,11 @@ export const useModalStore = create<ModalState>((set) => ({
 
   // 3. Global Search Overlay
   isSearchOpen: false,
-  searchQuery: '',
+  searchQuery: "",
   setIsSearchOpen: (isSearchOpen: boolean | ((prev: boolean) => boolean)) =>
     set((state) => ({
-      isSearchOpen: typeof isSearchOpen === 'function' ? isSearchOpen(state.isSearchOpen) : isSearchOpen
+      isSearchOpen:
+        typeof isSearchOpen === "function" ? isSearchOpen(state.isSearchOpen) : isSearchOpen,
     })),
   setSearchQuery: (searchQuery: string) => set({ searchQuery }),
 
@@ -81,5 +89,5 @@ export const useModalStore = create<ModalState>((set) => ({
   // 5. AI Memo Modal
   isAiMemoOpen: false,
   openAiMemo: () => set({ isAiMemoOpen: true }),
-  closeAiMemo: () => set({ isAiMemoOpen: false })
+  closeAiMemo: () => set({ isAiMemoOpen: false }),
 }));

@@ -1,8 +1,8 @@
-import { create } from 'zustand';
-import { apiFetch } from '../utils/api';
-import { isSparkOrTask } from '../utils/note';
-import { useAuthStore } from './authStore';
-import type { NoteItem, SparkItem } from '../types';
+import { create } from "zustand";
+import { apiFetch } from "../utils/api";
+import { isSparkOrTask } from "../utils/note";
+import { useAuthStore } from "./authStore";
+import type { NoteItem, SparkItem } from "../types";
 
 interface DerivedNoteData {
   allNotes: NoteItem[];
@@ -24,7 +24,7 @@ const deriveNoteData = (rawNotes: NoteItem[] = []): DerivedNoteData => {
     allNotes: rawNotes,
     notes,
     sparks,
-    tags: [...new Set(rawNotes.flatMap((n) => n.tags || []))]
+    tags: [...new Set(rawNotes.flatMap((n) => n.tags || []))],
   };
 };
 
@@ -57,18 +57,18 @@ export const useNotesStore = create<NotesState>((set) => ({
 
     set({ isLoadingNotes: true });
     try {
-      const res = await apiFetch('/api/notes');
+      const res = await apiFetch("/api/notes");
       if (res.ok) {
         const data = (await res.json()) as NoteItem[];
         set({
           ...deriveNoteData(data),
-          isLoadingNotes: false
+          isLoadingNotes: false,
         });
       } else {
         set({ isLoadingNotes: false });
       }
     } catch (err: unknown) {
-      console.error('Failed to fetch notes:', err);
+      console.error("Failed to fetch notes:", err);
       set({ isLoadingNotes: false });
     }
   },
@@ -78,13 +78,13 @@ export const useNotesStore = create<NotesState>((set) => ({
     if (!token) return;
 
     try {
-      const res = await apiFetch('/api/settings');
+      const res = await apiFetch("/api/settings");
       if (res.ok) {
         const data = (await res.json()) as { hasApiKey?: boolean; apiKey?: string };
         set({ aiConfigured: Boolean(data.hasApiKey || (data.apiKey && data.apiKey.trim())) });
       }
     } catch (err: unknown) {
-      console.error('Failed to check AI config:', err);
+      console.error("Failed to check AI config:", err);
     }
-  }
+  },
 }));

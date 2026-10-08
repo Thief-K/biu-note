@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface AuthState {
   token: string | null;
@@ -7,19 +7,19 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  token: typeof localStorage !== 'undefined' ? localStorage.getItem('biunote_token') : null,
+  token: typeof localStorage !== "undefined" ? localStorage.getItem("biunote_token") : null,
   setToken: (token: string | null) => {
-    if (typeof localStorage !== 'undefined') {
+    if (typeof localStorage !== "undefined") {
       if (token) {
-        localStorage.setItem('biunote_token', token);
+        localStorage.setItem("biunote_token", token);
       } else {
-        localStorage.removeItem('biunote_token');
+        localStorage.removeItem("biunote_token");
       }
     }
     set({ token });
   },
   logout: () => {
-    if (typeof localStorage !== 'undefined') localStorage.removeItem('biunote_token');
+    if (typeof localStorage !== "undefined") localStorage.removeItem("biunote_token");
     set({ token: null });
-  }
+  },
 }));

@@ -1,16 +1,24 @@
-import { useState, useRef, useEffect, useMemo, type ChangeEvent, type KeyboardEvent, type FormEvent } from 'react';
-import { Bot, Send, User, Trash2, Loader2, Settings, FileText, Lightbulb, X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useNotesStore } from '../stores/notesStore';
-import { useModalStore } from '../stores/modalStore';
-import { apiFetch } from '../utils/api';
-import { isSparkOrTask } from '../utils/note';
-import { useI18n } from '../i18n';
-import PageHeader from '../components/common/PageHeader';
-import AlertBanner from '../components/common/AlertBanner';
-import IconButton from '../components/common/IconButton';
-import MarkdownViewer from '../components/common/MarkdownViewer';
-import type { CandidateNote, ChatMessage } from '../types';
+import {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  type ChangeEvent,
+  type KeyboardEvent,
+  type FormEvent,
+} from "react";
+import { Bot, Send, User, Trash2, Loader2, Settings, FileText, Lightbulb, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useNotesStore } from "../stores/notesStore";
+import { useModalStore } from "../stores/modalStore";
+import { apiFetch } from "../utils/api";
+import { isSparkOrTask } from "../utils/note";
+import { useI18n } from "../i18n";
+import PageHeader from "../components/common/PageHeader";
+import AlertBanner from "../components/common/AlertBanner";
+import IconButton from "../components/common/IconButton";
+import MarkdownViewer from "../components/common/MarkdownViewer";
+import type { CandidateNote, ChatMessage } from "../types";
 
 export default function ChatPage() {
   const aiConfigured = useNotesStore((s) => s.aiConfigured);
@@ -21,21 +29,21 @@ export default function ChatPage() {
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
-      role: 'assistant',
-      content: t('chat.welcome')
-    }
+      role: "assistant",
+      content: t("chat.welcome"),
+    },
   ]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [selectedNotes, setSelectedNotes] = useState<CandidateNote[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   // Mention State
   const [mentionState, setMentionState] = useState({
     isOpen: false,
-    query: '',
+    query: "",
     matchStart: -1,
-    matchEnd: -1
+    matchEnd: -1,
   });
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -44,13 +52,13 @@ export default function ChatPage() {
   const mentionItemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
   // Auto-resize textarea height with exact reset on empty
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = "auto";
       if (input) {
         textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 144)}px`;
       }
@@ -62,19 +70,19 @@ export default function ChatPage() {
     if (!allNotes || allNotes.length === 0) return [];
     return allNotes.map((n) => {
       const isSpark = isSparkOrTask(n.filepath);
-      let title = '';
+      let title = "";
       if (isSpark) {
-        title = (n.content || '').trim().replace(/\n+/g, ' ').slice(0, 36) || n.filepath;
+        title = (n.content || "").trim().replace(/\n+/g, " ").slice(0, 36) || n.filepath;
       } else {
-        const base = n.filepath.split('/').pop() || n.filepath;
-        title = base.replace(/\.md$/i, '');
+        const base = n.filepath.split("/").pop() || n.filepath;
+        title = base.replace(/\.md$/i, "");
       }
       return {
         filepath: n.filepath,
         title,
-        type: isSpark ? 'spark' : 'note',
-        content: n.content || '',
-        tags: n.tags || []
+        type: isSpark ? "spark" : "note",
+        content: n.content || "",
+        tags: n.tags || [],
       };
     });
   }, [allNotes]);
@@ -102,7 +110,7 @@ export default function ChatPage() {
   // Scroll active item into view
   useEffect(() => {
     if (mentionState.isOpen && mentionItemRefs.current[selectedIndex]) {
-      mentionItemRefs.current[selectedIndex]?.scrollIntoView({ block: 'nearest' });
+      mentionItemRefs.current[selectedIndex]?.scrollIntoView({ block: "nearest" });
     }
   }, [selectedIndex, mentionState.isOpen]);
 
@@ -122,11 +130,11 @@ export default function ChatPage() {
         isOpen: true,
         query: matchQuery,
         matchStart,
-        matchEnd: cursor
+        matchEnd: cursor,
       });
       setSelectedIndex(0);
     } else {
-      setMentionState({ isOpen: false, query: '', matchStart: -1, matchEnd: -1 });
+      setMentionState({ isOpen: false, query: "", matchStart: -1, matchEnd: -1 });
     }
   };
 
@@ -142,7 +150,7 @@ export default function ChatPage() {
     const after = input.slice(mentionState.matchEnd);
     const nextInput = (before + after).trimStart();
     setInput(nextInput);
-    setMentionState({ isOpen: false, query: '', matchStart: -1, matchEnd: -1 });
+    setMentionState({ isOpen: false, query: "", matchStart: -1, matchEnd: -1 });
 
     setTimeout(() => {
       textareaRef.current?.focus();
@@ -155,35 +163,37 @@ export default function ChatPage() {
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (mentionState.isOpen && filteredCandidates.length > 0) {
-      if (e.key === 'ArrowDown') {
+      if (e.key === "ArrowDown") {
         e.preventDefault();
         setSelectedIndex((prev) => (prev + 1) % filteredCandidates.length);
         return;
       }
-      if (e.key === 'ArrowUp') {
+      if (e.key === "ArrowUp") {
         e.preventDefault();
-        setSelectedIndex((prev) => (prev - 1 + filteredCandidates.length) % filteredCandidates.length);
+        setSelectedIndex(
+          (prev) => (prev - 1 + filteredCandidates.length) % filteredCandidates.length,
+        );
         return;
       }
-      if (e.key === 'Enter' || e.key === 'Tab') {
+      if (e.key === "Enter" || e.key === "Tab") {
         e.preventDefault();
         handleSelectCandidate(filteredCandidates[selectedIndex]);
         return;
       }
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         e.preventDefault();
-        setMentionState({ isOpen: false, query: '', matchStart: -1, matchEnd: -1 });
+        setMentionState({ isOpen: false, query: "", matchStart: -1, matchEnd: -1 });
         return;
       }
     }
 
     // Backspace removes last chip if input is empty
-    if (e.key === 'Backspace' && !input && selectedNotes.length > 0) {
+    if (e.key === "Backspace" && !input && selectedNotes.length > 0) {
       setSelectedNotes((prev) => prev.slice(0, -1));
       return;
     }
 
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
@@ -195,36 +205,36 @@ export default function ChatPage() {
 
     const currentSelectedNotes = [...selectedNotes];
     const userMessage: ChatMessage = {
-      role: 'user',
+      role: "user",
       content: input.trim(),
-      referencedNotes: currentSelectedNotes.length > 0 ? currentSelectedNotes : null
+      referencedNotes: currentSelectedNotes.length > 0 ? currentSelectedNotes : null,
     };
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
 
-    setInput('');
+    setInput("");
     setSelectedNotes([]);
-    setMentionState({ isOpen: false, query: '', matchStart: -1, matchEnd: -1 });
+    setMentionState({ isOpen: false, query: "", matchStart: -1, matchEnd: -1 });
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
-      const res = await apiFetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await apiFetch("/api/ai/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: newMessages.map((m) => ({ role: m.role, content: m.content })),
-          activeNoteFiles: currentSelectedNotes.map((n) => n.filepath)
-        })
+          activeNoteFiles: currentSelectedNotes.map((n) => n.filepath),
+        }),
       });
 
       if (!res.ok) {
         const errData = await res.json();
-        throw new Error(errData.error || t('chat.error'));
+        throw new Error(errData.error || t("chat.error"));
       }
 
       const data = (await res.json()) as { content: string };
-      setMessages([...newMessages, { role: 'assistant', content: data.content }]);
+      setMessages([...newMessages, { role: "assistant", content: data.content }]);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       setError(msg);
@@ -238,14 +248,14 @@ export default function ChatPage() {
 
   const handleClearChat = () => {
     if (!canClear) return;
-    showConfirm(t('chat.clearConfirm'), () => {
+    showConfirm(t("chat.clearConfirm"), () => {
       setMessages([
         {
-          role: 'assistant',
-          content: t('chat.welcome')
-        }
+          role: "assistant",
+          content: t("chat.welcome"),
+        },
       ]);
-      setError('');
+      setError("");
     });
   };
 
@@ -257,17 +267,17 @@ export default function ChatPage() {
           if (window.history.state && window.history.state.idx > 0) {
             navigate(-1);
           } else {
-            navigate('/notes');
+            navigate("/notes");
           }
         }}
-        title={t('chat.title')}
+        title={t("chat.title")}
         actions={
           <IconButton
             icon={Trash2}
             size="md"
-            variant={canClear ? 'danger' : 'default'}
+            variant={canClear ? "danger" : "default"}
             disabled={!canClear}
-            className={!canClear ? 'opacity-30 cursor-not-allowed' : ''}
+            className={!canClear ? "opacity-30 cursor-not-allowed" : ""}
             onClick={handleClearChat}
           />
         }
@@ -279,33 +289,33 @@ export default function ChatPage() {
           {!aiConfigured && (
             <AlertBanner
               variant="warning"
-              message={t('chat.noConfig')}
+              message={t("chat.noConfig")}
               action={
                 <IconButton
                   icon={Settings}
                   variant="amber"
                   size="xs"
                   shape="rounded-lg"
-                  onClick={() => navigate('/settings')}
+                  onClick={() => navigate("/settings")}
                 />
               }
             />
           )}
 
           {messages.map((msg, idx) => {
-            const isUser = msg.role === 'user';
+            const isUser = msg.role === "user";
 
             return (
               <div
                 key={idx}
-                className={`flex items-start gap-3 ${isUser ? 'flex-row-reverse' : ''}`}
+                className={`flex items-start gap-3 ${isUser ? "flex-row-reverse" : ""}`}
               >
                 {/* Avatar */}
                 <div
                   className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border ${
                     isUser
-                      ? 'bg-zinc-800 border-zinc-700 text-zinc-200'
-                      : 'bg-purple-500/10 border-purple-500/25 text-purple-400'
+                      ? "bg-zinc-800 border-zinc-700 text-zinc-200"
+                      : "bg-purple-500/10 border-purple-500/25 text-purple-400"
                   }`}
                 >
                   {isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
@@ -327,7 +337,7 @@ export default function ChatPage() {
                             key={note.filepath}
                             className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-zinc-900/90 border border-zinc-800 text-zinc-400 rounded-lg text-xs font-mono"
                           >
-                            {note.type === 'spark' ? (
+                            {note.type === "spark" ? (
                               <Lightbulb className="w-3.5 h-3.5 text-amber-400/80 shrink-0" />
                             ) : (
                               <FileText className="w-3.5 h-3.5 text-purple-400/80 shrink-0" />
@@ -356,7 +366,7 @@ export default function ChatPage() {
               </div>
               <div className="p-3 rounded-2xl bg-zinc-900 border border-zinc-800 text-xs text-zinc-400 flex items-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
-                <span>{t('chat.thinking')}</span>
+                <span>{t("chat.thinking")}</span>
               </div>
             </div>
           )}
@@ -375,7 +385,7 @@ export default function ChatPage() {
             <div className="absolute bottom-full left-0 right-0 mb-2 max-h-60 overflow-y-auto bg-zinc-900/95 border border-zinc-800 rounded-2xl shadow-2xl z-50 p-1.5 flex flex-col gap-0.5 backdrop-blur-xl">
               {filteredCandidates.length === 0 ? (
                 <div className="px-3 py-4 text-xs text-zinc-500 text-center">
-                  {t('chat.mentionEmpty')}
+                  {t("chat.mentionEmpty")}
                 </div>
               ) : (
                 filteredCandidates.map((item, idx) => {
@@ -392,12 +402,12 @@ export default function ChatPage() {
                       onMouseEnter={() => setSelectedIndex(idx)}
                       className={`w-full flex items-center px-3 py-2 rounded-xl text-xs transition-all text-left cursor-pointer ${
                         isSelected
-                          ? 'bg-purple-500/15 text-purple-300 border border-purple-500/30'
-                          : 'text-zinc-300 hover:bg-zinc-800/60 border border-transparent'
+                          ? "bg-purple-500/15 text-purple-300 border border-purple-500/30"
+                          : "text-zinc-300 hover:bg-zinc-800/60 border border-transparent"
                       }`}
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
-                        {item.type === 'spark' ? (
+                        {item.type === "spark" ? (
                           <Lightbulb className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                         ) : (
                           <FileText className="w-3.5 h-3.5 text-purple-400 shrink-0" />
@@ -422,7 +432,7 @@ export default function ChatPage() {
                       key={note.filepath}
                       className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-purple-500/15 border border-purple-500/30 text-purple-300 rounded-lg text-xs font-mono select-none animate-in fade-in zoom-in-95 shrink-0"
                     >
-                      {note.type === 'spark' ? (
+                      {note.type === "spark" ? (
                         <Lightbulb className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                       ) : (
                         <FileText className="w-3.5 h-3.5 text-purple-400 shrink-0" />
@@ -452,10 +462,10 @@ export default function ChatPage() {
                   disabled={!aiConfigured || loading}
                   placeholder={
                     !aiConfigured
-                      ? t('chat.noConfig')
+                      ? t("chat.noConfig")
                       : selectedNotes.length > 0
-                      ? '输入关于所选笔记的问题...'
-                      : t('chat.placeholder')
+                        ? "输入关于所选笔记的问题..."
+                        : t("chat.placeholder")
                   }
                   rows={1}
                   className="flex-1 min-w-[120px] max-h-36 bg-transparent text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none resize-none select-text disabled:opacity-40 disabled:cursor-not-allowed py-1 leading-6 outline-none"
@@ -465,18 +475,20 @@ export default function ChatPage() {
                   type="submit"
                   icon={Send}
                   loading={loading}
-                  disabled={loading || (!input.trim() && selectedNotes.length === 0) || !aiConfigured}
+                  disabled={
+                    loading || (!input.trim() && selectedNotes.length === 0) || !aiConfigured
+                  }
                   size="sm"
                   shape="rounded-xl"
                   variant={
                     (input.trim() || selectedNotes.length > 0) && !loading && aiConfigured
-                      ? 'primary-purple'
-                      : 'default'
+                      ? "primary-purple"
+                      : "default"
                   }
                   className={`w-8 h-8 shrink-0 ${
                     !(input.trim() || selectedNotes.length > 0) || loading || !aiConfigured
-                      ? 'opacity-40 cursor-not-allowed'
-                      : ''
+                      ? "opacity-40 cursor-not-allowed"
+                      : ""
                   }`}
                 />
               </div>

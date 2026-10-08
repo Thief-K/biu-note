@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { useI18n } from '../i18n';
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { useI18n } from "../i18n";
 
-describe('useSpeechRecognition hook & Web Speech API integration', () => {
+describe("useSpeechRecognition hook & Web Speech API integration", () => {
   let mockRecognitionInstance: any;
   let originalWindow: any;
 
@@ -9,7 +9,7 @@ describe('useSpeechRecognition hook & Web Speech API integration', () => {
     mockRecognitionInstance = {
       continuous: false,
       interimResults: false,
-      lang: '',
+      lang: "",
       start: vi.fn(function (this: any) {
         this.onstart?.();
       }),
@@ -22,7 +22,7 @@ describe('useSpeechRecognition hook & Web Speech API integration', () => {
       onstart: null,
       onend: null,
       onerror: null,
-      onresult: null
+      onresult: null,
     };
 
     originalWindow = globalThis.window;
@@ -30,7 +30,7 @@ describe('useSpeechRecognition hook & Web Speech API integration', () => {
     (globalThis as any).window = {
       SpeechRecognition: vi.fn(function () {
         return mockRecognitionInstance;
-      })
+      }),
     };
   });
 
@@ -39,44 +39,44 @@ describe('useSpeechRecognition hook & Web Speech API integration', () => {
     (globalThis as any).window = originalWindow;
   });
 
-  it('initializes with Web Speech API support', () => {
+  it("initializes with Web Speech API support", () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const SpeechRecognition = (globalThis.window as any).SpeechRecognition;
     expect(SpeechRecognition).toBeDefined();
   });
 
-  it('correctly formats speech language from i18n store', () => {
-    useI18n.getState().setLanguage('zh');
-    expect(useI18n.getState().language).toBe('zh');
+  it("correctly formats speech language from i18n store", () => {
+    useI18n.getState().setLanguage("zh");
+    expect(useI18n.getState().language).toBe("zh");
 
-    useI18n.getState().setLanguage('en');
-    expect(useI18n.getState().language).toBe('en');
+    useI18n.getState().setLanguage("en");
+    expect(useI18n.getState().language).toBe("en");
   });
 
-  it('creates recognition instance with proper parameters and handles speech events', () => {
-    useI18n.getState().setLanguage('zh');
+  it("creates recognition instance with proper parameters and handles speech events", () => {
+    useI18n.getState().setLanguage("zh");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const RecognitionClass = (globalThis.window as any).SpeechRecognition;
     const recognition = new RecognitionClass();
 
     recognition.continuous = true;
     recognition.interimResults = true;
-    recognition.lang = 'zh-CN';
+    recognition.lang = "zh-CN";
 
     expect(recognition.continuous).toBe(true);
     expect(recognition.interimResults).toBe(true);
-    expect(recognition.lang).toBe('zh-CN');
+    expect(recognition.lang).toBe("zh-CN");
 
-    let received = '';
+    let received = "";
     recognition.onresult = (e: any) => {
       received = e.results[0][0].transcript;
     };
 
     recognition.onresult({
       resultIndex: 0,
-      results: [[{ transcript: '测试灵感记录', isFinal: true }]]
+      results: [[{ transcript: "测试灵感记录", isFinal: true }]],
     });
 
-    expect(received).toBe('测试灵感记录');
+    expect(received).toBe("测试灵感记录");
   });
 });

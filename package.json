@@ -1,16 +1,16 @@
 {
   "name": "BiuNote",
   "version": "1.0.5",
-  "type": "module",
   "private": true,
   "description": "Pure Markdown Note-Taking App with Integrated AI Copilot",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "dev": "concurrently \"pnpm --filter biunote-backend dev\" \"pnpm --filter biunote-frontend dev\"",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "npx oxlint backend/ frontend/src/",
-    "format": "npx oxfmt backend/ frontend/src/",
+    "lint": "oxlint ./",
+    "format": "oxfmt ./",
     "typecheck": "tsc -b"
   },
   "devDependencies": {

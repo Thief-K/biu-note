@@ -1,27 +1,30 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Save, Check, ListTree, Wand2, Eye, Edit3, FileText } from 'lucide-react';
-import { marked } from 'marked';
-import { useNotesStore } from '../../stores/notesStore';
-import { useModalStore } from '../../stores/modalStore';
-import { apiFetch } from '../../utils/api';
-import { useI18n } from '../../i18n';
-import OutlineDrawer from '../common/OutlineDrawer';
-import AiModifyDrawer from '../common/AiModifyDrawer';
-import MarkdownViewer from '../common/MarkdownViewer';
-import { TagList } from '../common/TagBadge';
-import AlertBanner from '../common/AlertBanner';
-import IconButton from '../common/IconButton';
-import PageHeader from '../common/PageHeader';
-import ContentContainer from '../common/ContentContainer';
-import type { HeadingItem, NoteItem } from '../../types';
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { Save, Check, ListTree, Wand2, Eye, Edit3, FileText } from "lucide-react";
+import { marked } from "marked";
+import { useNotesStore } from "../../stores/notesStore";
+import { useModalStore } from "../../stores/modalStore";
+import { apiFetch } from "../../utils/api";
+import { useI18n } from "../../i18n";
+import OutlineDrawer from "../common/OutlineDrawer";
+import AiModifyDrawer from "../common/AiModifyDrawer";
+import MarkdownViewer from "../common/MarkdownViewer";
+import { TagList } from "../common/TagBadge";
+import AlertBanner from "../common/AlertBanner";
+import IconButton from "../common/IconButton";
+import PageHeader from "../common/PageHeader";
+import ContentContainer from "../common/ContentContainer";
+import type { HeadingItem, NoteItem } from "../../types";
 
 // Extracts title from first markdown heading or plain line
 const extractTitleFromContent = (text: string): string => {
   const heading =
-    (text || '').match(/^\s*#{1,6}\s+(.+)$/m)?.[1] ||
-    (text || '').split('\n').find((l) => l.trim())?.slice(0, 30);
-  return heading ? heading.replace(/[\\/:*?"<>|]/g, '').trim() : '';
+    (text || "").match(/^\s*#{1,6}\s+(.+)$/m)?.[1] ||
+    (text || "")
+      .split("\n")
+      .find((l) => l.trim())
+      ?.slice(0, 30);
+  return heading ? heading.replace(/[\\/:*?"<>|]/g, "").trim() : "";
 };
 
 export interface LiveMarkdownEditorProps {
@@ -33,7 +36,7 @@ export interface LiveMarkdownEditorProps {
 export default function LiveMarkdownEditor({
   filepath,
   initialNote,
-  onSaved
+  onSaved,
 }: LiveMarkdownEditorProps) {
   const fetchNotes = useNotesStore((s) => s.fetchNotes);
   const openDiff = useModalStore((s) => s.openDiff);
@@ -41,24 +44,26 @@ export default function LiveMarkdownEditor({
   const { t } = useI18n();
   const navigate = useNavigate();
 
-  const isNew = filepath === 'new';
-  const [content, setContent] = useState<string>(() => (isNew ? '' : initialNote?.content || ''));
-  const [initialContent, setInitialContent] = useState<string>(() => (isNew ? '' : initialNote?.content || ''));
+  const isNew = filepath === "new";
+  const [content, setContent] = useState<string>(() => (isNew ? "" : initialNote?.content || ""));
+  const [initialContent, setInitialContent] = useState<string>(() =>
+    isNew ? "" : initialNote?.content || "",
+  );
   const [tags, setTags] = useState<string[]>(() =>
-    isNew ? [] : Array.isArray(initialNote?.tags) ? initialNote.tags : []
+    isNew ? [] : Array.isArray(initialNote?.tags) ? initialNote.tags : [],
   );
   const [initialTags, setInitialTags] = useState<string[]>(() =>
-    isNew ? [] : Array.isArray(initialNote?.tags) ? initialNote.tags : []
+    isNew ? [] : Array.isArray(initialNote?.tags) ? initialNote.tags : [],
   );
   const [isPreview, setIsPreview] = useState<boolean>(() => !isNew);
 
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
-  const [editorError, setEditorError] = useState('');
+  const [editorError, setEditorError] = useState("");
   const [isOutlineOpen, setIsOutlineOpen] = useState(false);
   const [isAiDrawerOpen, setIsAiDrawerOpen] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
-  const [aiError, setAiError] = useState('');
+  const [aiError, setAiError] = useState("");
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -80,7 +85,7 @@ export default function LiveMarkdownEditor({
     if (isNew || hasInitializedRef.current) return;
     if (initialNote) {
       hasInitializedRef.current = true;
-      const noteContent = initialNote.content || '';
+      const noteContent = initialNote.content || "";
       const noteTags = Array.isArray(initialNote.tags) ? initialNote.tags : [];
       setContent(noteContent);
       setInitialContent(noteContent);
@@ -103,7 +108,7 @@ export default function LiveMarkdownEditor({
   const adjustTextareaHeight = useCallback(() => {
     const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = 'auto';
+      textarea.style.height = "auto";
       textarea.style.height = `${Math.max(textarea.scrollHeight, 400)}px`;
     }
   }, []);
@@ -131,14 +136,14 @@ export default function LiveMarkdownEditor({
       const list: HeadingItem[] = [];
       let headingIndex = 0;
       tokens.forEach((token) => {
-        if (token.type === 'heading' && token.depth <= 3) {
-          const text = (token.text || '').replace(/<[^>]*>/g, '').trim();
+        if (token.type === "heading" && token.depth <= 3) {
+          const text = (token.text || "").replace(/<[^>]*>/g, "").trim();
           list.push({
             index: headingIndex,
             level: token.depth,
             text,
             raw: token.raw,
-            id: `heading-${headingIndex}`
+            id: `heading-${headingIndex}`,
           });
           headingIndex++;
         }
@@ -153,13 +158,13 @@ export default function LiveMarkdownEditor({
   const handleSave = async () => {
     if (saving || !canSave) return;
     setSaving(true);
-    setEditorError('');
+    setEditorError("");
 
-    let targetFile = '';
+    let targetFile = "";
     if (isNew) {
       const titleExtracted = extractTitleFromContent(content);
       if (!titleExtracted) {
-        setEditorError('请输入笔记内容');
+        setEditorError("请输入笔记内容");
         setSaving(false);
         return;
       }
@@ -169,15 +174,15 @@ export default function LiveMarkdownEditor({
     }
 
     try {
-      const res = await apiFetch('/api/notes/raw', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filepath: targetFile, content, tags })
+      const res = await apiFetch("/api/notes/raw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filepath: targetFile, content, tags }),
       });
 
       if (!res.ok) {
         const errData = await res.json();
-        throw new Error(errData.error || t('common.saveFailed'));
+        throw new Error(errData.error || t("common.saveFailed"));
       }
 
       const data = (await res.json()) as { filepath: string; content?: string };
@@ -210,26 +215,26 @@ export default function LiveMarkdownEditor({
   // Keyboard Shortcuts (Ctrl+S / Cmd+S manual save, Ctrl+P / Ctrl+Shift+V toggle preview)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
         e.preventDefault();
         handleSave();
-      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "p") {
         e.preventDefault();
         togglePreview();
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   });
 
   // Guard against accidental navigation when unsaved
   const handleBack = () => {
     if (isDirty) {
-      showConfirm(t('notes.unsavedConfirm'), () => {
-        navigate('/notes');
+      showConfirm(t("notes.unsavedConfirm"), () => {
+        navigate("/notes");
       });
     } else {
-      navigate('/notes');
+      navigate("/notes");
     }
   };
 
@@ -237,39 +242,39 @@ export default function LiveMarkdownEditor({
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (isDirty) {
         e.preventDefault();
-        e.returnValue = '';
+        e.returnValue = "";
       }
     };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [isDirty]);
 
   // Handle AI Whole-note Modify
   const handleAiModify = async (presetMemo?: string) => {
-    const memoToUse = presetMemo || '';
+    const memoToUse = presetMemo || "";
     if (!memoToUse.trim()) return;
 
     setAiLoading(true);
-    setAiError('');
+    setAiError("");
     try {
-      const res = await apiFetch('/api/ai/process', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await apiFetch("/api/ai/process", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          filepath: isNew ? 'Untitled.md' : filepath,
+          filepath: isNew ? "Untitled.md" : filepath,
           content,
-          memo: memoToUse
-        })
+          memo: memoToUse,
+        }),
       });
 
       if (!res.ok) {
         const errData = await res.json();
-        throw new Error(errData.error || t('chat.error'));
+        throw new Error(errData.error || t("chat.error"));
       }
 
       const data = await res.json();
       setIsAiDrawerOpen(false);
-      setAiError('');
+      setAiError("");
       openDiff(data);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -289,7 +294,7 @@ export default function LiveMarkdownEditor({
       // Preview Mode: Smooth scroll to rendered DOM element
       const el = document.getElementById(targetId);
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     } else {
       // Edit Mode: Scroll container smoothly and position cursor without instant scroll jump
@@ -304,13 +309,13 @@ export default function LiveMarkdownEditor({
 
         if (charIndex !== -1) {
           const textBefore = content.substring(0, charIndex);
-          const lineIndex = textBefore.split('\n').length - 1;
-          const totalLines = Math.max(content.split('\n').length, 1);
+          const lineIndex = textBefore.split("\n").length - 1;
+          const totalLines = Math.max(content.split("\n").length, 1);
           const targetScrollTop = (textarea.offsetHeight * lineIndex) / totalLines;
 
           container.scrollTo({
             top: Math.max(0, targetScrollTop - 20),
-            behavior: 'smooth'
+            behavior: "smooth",
           });
 
           // preventScroll: true prevents instant jarring scroll jump from browser focus
@@ -328,7 +333,13 @@ export default function LiveMarkdownEditor({
         onBack={handleBack}
         icon={FileText}
         iconClassName="bg-blue-500/10 border-blue-500/20 text-blue-400"
-        title={isNew ? t('notes.newTitle') : (initialNote?.filepath?.replace(/\.md$/, '') || filepath.replace(/\.md$/, '') || t('notes.title'))}
+        title={
+          isNew
+            ? t("notes.newTitle")
+            : initialNote?.filepath?.replace(/\.md$/, "") ||
+              filepath.replace(/\.md$/, "") ||
+              t("notes.title")
+        }
         actions={
           <>
             {/* Toggle Preview Button (VS Code style single pane toggle) */}
@@ -349,7 +360,7 @@ export default function LiveMarkdownEditor({
                   disabled={saving || !canSave}
                   size="md"
                   shape="rounded-full"
-                  variant={savedSuccess ? 'emerald' : canSave ? 'amber' : 'default'}
+                  variant={savedSuccess ? "emerald" : canSave ? "amber" : "default"}
                   onClick={handleSave}
                 />
                 {isDirty && (
@@ -373,7 +384,7 @@ export default function LiveMarkdownEditor({
                 icon={ListTree}
                 size="md"
                 shape="rounded-full"
-                variant={isOutlineOpen ? 'emerald' : 'default'}
+                variant={isOutlineOpen ? "emerald" : "default"}
                 onClick={() => setIsOutlineOpen((prev) => !prev)}
               />
             )}
@@ -409,7 +420,7 @@ export default function LiveMarkdownEditor({
                 <MarkdownViewer content={content} />
               ) : (
                 <div className="py-20 text-center text-xs text-zinc-500">
-                  {t('editor.emptyPreview')}
+                  {t("editor.emptyPreview")}
                 </div>
               )}
             </div>
@@ -439,9 +450,9 @@ export default function LiveMarkdownEditor({
                 ref={textareaRef}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder={t('editor.placeholder')}
+                placeholder={t("editor.placeholder")}
                 className="w-full flex-1 bg-transparent text-zinc-100 placeholder-zinc-600 focus:outline-none resize-none leading-relaxed text-base md:text-[15px] font-mono select-text"
-                style={{ minHeight: '500px' }}
+                style={{ minHeight: "500px" }}
               />
             </>
           )}
@@ -461,7 +472,7 @@ export default function LiveMarkdownEditor({
         isOpen={isAiDrawerOpen}
         onClose={() => {
           setIsAiDrawerOpen(false);
-          setAiError('');
+          setAiError("");
         }}
         onModify={handleAiModify}
         loading={aiLoading}

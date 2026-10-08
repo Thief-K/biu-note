@@ -1,7 +1,7 @@
-import type { ComponentType, FormEventHandler, ReactNode } from 'react';
-import { X, Check } from 'lucide-react';
-import AlertBanner from './AlertBanner';
-import IconButton from './IconButton';
+import type { ComponentType, FormEventHandler, ReactNode } from "react";
+import { X, Check } from "lucide-react";
+import AlertBanner from "./AlertBanner";
+import IconButton from "./IconButton";
 
 export interface QuickModalProps {
   isOpen?: boolean;
@@ -14,7 +14,7 @@ export interface QuickModalProps {
   charCount?: number;
   canSubmit?: boolean;
   confirmIcon?: ComponentType<{ size?: number | string; className?: string }>;
-  accentColor?: 'amber' | 'emerald' | string;
+  accentColor?: "amber" | "emerald" | string;
   leftAction?: ReactNode;
   children?: ReactNode;
 }
@@ -29,25 +29,25 @@ export default function QuickModal({
   icon: Icon,
   title,
   loading = false,
-  error = '',
+  error = "",
   charCount = 0,
   canSubmit = true,
   confirmIcon: ConfirmIcon = Check,
-  accentColor = 'amber',
+  accentColor = "amber",
   leftAction,
-  children
+  children,
 }: QuickModalProps) {
   if (!isOpen) return null;
 
   const accentStyles: Record<string, { cardBorder: string; iconBox: string }> = {
     amber: {
-      cardBorder: 'border-amber-500/40',
-      iconBox: 'bg-amber-500/10 border-amber-500/20 text-amber-500 dark:text-amber-400'
+      cardBorder: "border-amber-500/40",
+      iconBox: "bg-amber-500/10 border-amber-500/20 text-amber-500 dark:text-amber-400",
     },
     emerald: {
-      cardBorder: 'border-emerald-500/40',
-      iconBox: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500 dark:text-emerald-400'
-    }
+      cardBorder: "border-emerald-500/40",
+      iconBox: "bg-emerald-500/10 border-emerald-500/20 text-emerald-500 dark:text-emerald-400",
+    },
   };
 
   const currentAccentStyle = accentStyles[accentColor] || accentStyles.emerald;
@@ -66,7 +66,9 @@ export default function QuickModal({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {Icon && (
-              <div className={`w-7 h-7 rounded-lg border flex items-center justify-center shrink-0 ${currentAccentStyle.iconBox}`}>
+              <div
+                className={`w-7 h-7 rounded-lg border flex items-center justify-center shrink-0 ${currentAccentStyle.iconBox}`}
+              >
                 <Icon size={16} className="w-3.5 h-3.5" />
               </div>
             )}
@@ -74,9 +76,13 @@ export default function QuickModal({
           </div>
 
           <div className="hidden sm:flex items-center gap-1 text-[10px] text-zinc-500 font-mono">
-            <kbd className="px-1.5 py-0.5 rounded bg-zinc-800/80 border border-zinc-700/60 text-zinc-400 text-[9px]">Ctrl</kbd>
+            <kbd className="px-1.5 py-0.5 rounded bg-zinc-800/80 border border-zinc-700/60 text-zinc-400 text-[9px]">
+              Ctrl
+            </kbd>
             <span>+</span>
-            <kbd className="px-1.5 py-0.5 rounded bg-zinc-800/80 border border-zinc-700/60 text-zinc-400 text-[9px]">↵</kbd>
+            <kbd className="px-1.5 py-0.5 rounded bg-zinc-800/80 border border-zinc-700/60 text-zinc-400 text-[9px]">
+              ↵
+            </kbd>
           </div>
         </div>
 
@@ -91,9 +97,7 @@ export default function QuickModal({
             <div className="flex items-center gap-2">
               {leftAction}
               {charCount > 0 && (
-                <span className="text-[11px] text-zinc-500 font-mono">
-                  {`${charCount} 字`}
-                </span>
+                <span className="text-[11px] text-zinc-500 font-mono">{`${charCount} 字`}</span>
               )}
             </div>
 
@@ -115,8 +119,14 @@ export default function QuickModal({
                 disabled={!isBtnActive}
                 size="md"
                 shape="rounded-full"
-                variant={isBtnActive ? (accentColor === 'amber' ? 'primary-amber' : 'primary-emerald') : 'default'}
-                className={!isBtnActive ? 'opacity-40' : ''}
+                variant={
+                  isBtnActive
+                    ? accentColor === "amber"
+                      ? "primary-amber"
+                      : "primary-emerald"
+                    : "default"
+                }
+                className={!isBtnActive ? "opacity-40" : ""}
               />
             </div>
           </div>

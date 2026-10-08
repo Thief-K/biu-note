@@ -1,18 +1,18 @@
-import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ListTree, Wand2, FileText } from 'lucide-react';
-import { marked } from 'marked';
-import { useModalStore } from '../../stores/modalStore';
-import { apiFetch } from '../../utils/api';
-import { useI18n } from '../../i18n';
-import MarkdownViewer from '../common/MarkdownViewer';
-import OutlineDrawer from '../common/OutlineDrawer';
-import AiModifyDrawer from '../common/AiModifyDrawer';
-import { TagList } from '../common/TagBadge';
-import IconButton from '../common/IconButton';
-import PageHeader from '../common/PageHeader';
-import ContentContainer from '../common/ContentContainer';
-import type { HeadingItem, NoteItem } from '../../types';
+import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { ListTree, Wand2, FileText } from "lucide-react";
+import { marked } from "marked";
+import { useModalStore } from "../../stores/modalStore";
+import { apiFetch } from "../../utils/api";
+import { useI18n } from "../../i18n";
+import MarkdownViewer from "../common/MarkdownViewer";
+import OutlineDrawer from "../common/OutlineDrawer";
+import AiModifyDrawer from "../common/AiModifyDrawer";
+import { TagList } from "../common/TagBadge";
+import IconButton from "../common/IconButton";
+import PageHeader from "../common/PageHeader";
+import ContentContainer from "../common/ContentContainer";
+import type { HeadingItem, NoteItem } from "../../types";
 
 export interface NoteReaderProps {
   note?: NoteItem | null;
@@ -26,7 +26,7 @@ export default function NoteReader({ note }: NoteReaderProps) {
   const [isOutlineOpen, setIsOutlineOpen] = useState(false);
   const [isAiDrawerOpen, setIsAiDrawerOpen] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
-  const [aiError, setAiError] = useState('');
+  const [aiError, setAiError] = useState("");
 
   // Extract headings from note content for TOC using marked.lexer (100% AST synced)
   const headings = useMemo<HeadingItem[]>(() => {
@@ -36,14 +36,14 @@ export default function NoteReader({ note }: NoteReaderProps) {
       const list: HeadingItem[] = [];
       let headingIndex = 0;
       tokens.forEach((token) => {
-        if (token.type === 'heading' && token.depth <= 3) {
-          const text = (token.text || '').replace(/<[^>]*>/g, '').trim();
+        if (token.type === "heading" && token.depth <= 3) {
+          const text = (token.text || "").replace(/<[^>]*>/g, "").trim();
           list.push({
             index: headingIndex,
             level: token.depth,
             text,
             raw: token.raw,
-            id: `heading-${headingIndex}`
+            id: `heading-${headingIndex}`,
           });
           headingIndex++;
         }
@@ -57,25 +57,25 @@ export default function NoteReader({ note }: NoteReaderProps) {
   // Handle AI Whole-note Modify
   const handleAiModify = async (presetMemo?: string) => {
     if (!note) return;
-    const memoToUse = presetMemo || '';
+    const memoToUse = presetMemo || "";
     if (!memoToUse.trim()) return;
 
     setAiLoading(true);
-    setAiError('');
+    setAiError("");
     try {
-      const res = await apiFetch('/api/ai/process', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await apiFetch("/api/ai/process", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           filepath: note.filepath,
           content: note.content,
-          memo: memoToUse
-        })
+          memo: memoToUse,
+        }),
       });
 
       if (!res.ok) {
         const errData = await res.json();
-        throw new Error(errData.error || t('chat.error'));
+        throw new Error(errData.error || t("chat.error"));
       }
 
       const data = await res.json();
@@ -95,7 +95,7 @@ export default function NoteReader({ note }: NoteReaderProps) {
     const targetId = h.id || `heading-${h.index}`;
     const el = document.getElementById(targetId);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
@@ -103,10 +103,10 @@ export default function NoteReader({ note }: NoteReaderProps) {
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-zinc-950 text-zinc-100 relative">
       {/* 📍 1. Sticky Glass Top Navigation Bar */}
       <PageHeader
-        onBack={() => navigate('/notes')}
+        onBack={() => navigate("/notes")}
         icon={FileText}
         iconClassName="bg-blue-500/10 border-blue-500/20 text-blue-400"
-        title={note?.filepath?.replace(/\.md$/, '') || t('notes.title')}
+        title={note?.filepath?.replace(/\.md$/, "") || t("notes.title")}
         actions={
           <>
             {/* AI Assistant Modify button */}
@@ -124,7 +124,7 @@ export default function NoteReader({ note }: NoteReaderProps) {
                 icon={ListTree}
                 size="md"
                 shape="rounded-full"
-                variant={isOutlineOpen ? 'emerald' : 'default'}
+                variant={isOutlineOpen ? "emerald" : "default"}
                 onClick={() => setIsOutlineOpen((prev) => !prev)}
               />
             )}
@@ -147,7 +147,7 @@ export default function NoteReader({ note }: NoteReaderProps) {
             <MarkdownViewer content={note.content} />
           ) : (
             <div className="py-20 text-center text-xs text-zinc-500">
-              {t('editor.emptyPreview')}
+              {t("editor.emptyPreview")}
             </div>
           )}
         </ContentContainer>

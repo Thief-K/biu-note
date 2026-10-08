@@ -4,7 +4,7 @@
  * @returns The formatted date string
  */
 export const formatDate = (val?: number | string | Date | null): string => {
-  if (!val) return '';
+  if (!val) return "";
   const d = new Date(val);
-  return isNaN(d.getTime()) ? '' : d.toLocaleString('sv').slice(0, 16);
+  return isNaN(d.getTime()) ? "" : d.toLocaleString("sv").slice(0, 16);
 };

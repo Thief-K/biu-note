@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { useI18n } from '../i18n';
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useI18n } from "../i18n";
 
 interface SpeechRecognitionErrorEvent extends Event {
   error: string;
@@ -38,9 +38,10 @@ export function useSpeechRecognition(options?: UseSpeechRecognitionOptions) {
   optionsRef.current = options;
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const SpeechRecognition =
+        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       setIsSupported(!!SpeechRecognition);
     }
   }, []);
@@ -57,12 +58,13 @@ export function useSpeechRecognition(options?: UseSpeechRecognitionOptions) {
   }, []);
 
   const start = useCallback(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const SpeechRecognitionClass = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognitionClass =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognitionClass) {
-      optionsRef.current?.onError?.('sparks.speechNotSupported');
+      optionsRef.current?.onError?.("sparks.speechNotSupported");
       return;
     }
 
@@ -79,15 +81,15 @@ export function useSpeechRecognition(options?: UseSpeechRecognitionOptions) {
       const recognition = new SpeechRecognitionClass() as ISpeechRecognition;
       recognition.continuous = true;
       recognition.interimResults = true;
-      recognition.lang = language === 'zh' ? 'zh-CN' : 'en-US';
+      recognition.lang = language === "zh" ? "zh-CN" : "en-US";
 
       recognition.onstart = () => {
         setIsListening(true);
       };
 
       recognition.onresult = (event: SpeechRecognitionEvent) => {
-        let finalTranscript = '';
-        let interimTranscript = '';
+        let finalTranscript = "";
+        let interimTranscript = "";
 
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           const result = event.results[i];
@@ -105,9 +107,9 @@ export function useSpeechRecognition(options?: UseSpeechRecognitionOptions) {
       };
 
       recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-        if (event.error === 'not-allowed') {
-          optionsRef.current?.onError?.('sparks.micPermissionDenied');
-        } else if (event.error !== 'no-speech' && event.error !== 'aborted') {
+        if (event.error === "not-allowed") {
+          optionsRef.current?.onError?.("sparks.micPermissionDenied");
+        } else if (event.error !== "no-speech" && event.error !== "aborted") {
           optionsRef.current?.onError?.(event.message || event.error);
         }
         setIsListening(false);
@@ -120,7 +122,7 @@ export function useSpeechRecognition(options?: UseSpeechRecognitionOptions) {
       recognitionRef.current = recognition;
       recognition.start();
     } catch {
-      optionsRef.current?.onError?.('sparks.speechNotSupported');
+      optionsRef.current?.onError?.("sparks.speechNotSupported");
       setIsListening(false);
     }
   }, [language]);
@@ -151,6 +153,6 @@ export function useSpeechRecognition(options?: UseSpeechRecognitionOptions) {
     isSupported,
     start,
     stop,
-    toggle
+    toggle,
   };
 }

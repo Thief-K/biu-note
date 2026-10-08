@@ -1,15 +1,29 @@
-import { useState, useEffect, type FormEvent } from 'react';
-import { Settings, User, Cpu, Sun, Moon, Monitor, Save, LogOut, Check, Loader2, Globe, Eye, EyeOff } from 'lucide-react';
-import { useThemeStore } from '../stores/themeStore';
-import { useNotesStore } from '../stores/notesStore';
-import { useAuthStore } from '../stores/authStore';
-import { useModalStore } from '../stores/modalStore';
-import { apiFetch } from '../utils/api';
-import { useI18n, type LocaleKey } from '../i18n';
-import PageHeader from '../components/common/PageHeader';
-import AlertBanner from '../components/common/AlertBanner';
-import IconButton from '../components/common/IconButton';
-import ContentContainer from '../components/common/ContentContainer';
+import { useState, useEffect, type FormEvent } from "react";
+import {
+  Settings,
+  User,
+  Cpu,
+  Sun,
+  Moon,
+  Monitor,
+  Save,
+  LogOut,
+  Check,
+  Loader2,
+  Globe,
+  Eye,
+  EyeOff,
+} from "lucide-react";
+import { useThemeStore } from "../stores/themeStore";
+import { useNotesStore } from "../stores/notesStore";
+import { useAuthStore } from "../stores/authStore";
+import { useModalStore } from "../stores/modalStore";
+import { apiFetch } from "../utils/api";
+import { useI18n, type LocaleKey } from "../i18n";
+import PageHeader from "../components/common/PageHeader";
+import AlertBanner from "../components/common/AlertBanner";
+import IconButton from "../components/common/IconButton";
+import ContentContainer from "../components/common/ContentContainer";
 
 interface FormSettings {
   apiKey: string;
@@ -28,34 +42,34 @@ export default function SettingsPage() {
   const { t, language, setLanguage } = useI18n();
 
   const handleLogout = () => {
-    showConfirm(t('settings.logoutConfirm'), () => {
+    showConfirm(t("settings.logoutConfirm"), () => {
       logout();
       setNotes([]);
     });
   };
 
   const [formSettings, setFormSettings] = useState<FormSettings>({
-    apiKey: '',
-    baseUrl: '',
-    model: '',
-    embeddingModel: ''
+    apiKey: "",
+    baseUrl: "",
+    model: "",
+    embeddingModel: "",
   });
   const [initialSettings, setInitialSettings] = useState<FormSettings>({
-    apiKey: '',
-    baseUrl: '',
-    model: '',
-    embeddingModel: ''
+    apiKey: "",
+    baseUrl: "",
+    model: "",
+    embeddingModel: "",
   });
   const [showApiKey, setShowApiKey] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const loadSettings = async () => {
     setLoading(true);
     try {
-      const res = await apiFetch('/api/settings');
+      const res = await apiFetch("/api/settings");
       if (res.ok) {
         const data = (await res.json()) as {
           maskedKey?: string;
@@ -65,16 +79,16 @@ export default function SettingsPage() {
           embeddingModel?: string;
         };
         const loaded: FormSettings = {
-          apiKey: data.maskedKey || data.apiKey || '',
-          baseUrl: data.baseUrl || '',
-          model: data.model || '',
-          embeddingModel: data.embeddingModel || ''
+          apiKey: data.maskedKey || data.apiKey || "",
+          baseUrl: data.baseUrl || "",
+          model: data.model || "",
+          embeddingModel: data.embeddingModel || "",
         };
         setFormSettings(loaded);
         setInitialSettings(loaded);
       }
     } catch (err: unknown) {
-      console.error('Failed to load settings:', err);
+      console.error("Failed to load settings:", err);
     } finally {
       setLoading(false);
     }
@@ -90,16 +104,16 @@ export default function SettingsPage() {
     e.preventDefault();
     if (!isDirty || saving) return;
     setSaving(true);
-    setError('');
+    setError("");
     try {
-      const res = await apiFetch('/api/settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formSettings)
+      const res = await apiFetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formSettings),
       });
       if (!res.ok) {
         const errData = await res.json();
-        throw new Error(errData.error || t('settings.saveFailed'));
+        throw new Error(errData.error || t("settings.saveFailed"));
       }
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 2000);
@@ -119,7 +133,7 @@ export default function SettingsPage() {
       <PageHeader
         icon={Settings}
         iconClassName="bg-zinc-800/80 border-zinc-700/80 text-zinc-300"
-        title={t('settings.title')}
+        title={t("settings.title")}
       />
 
       {/* 2. Scrollable Body */}
@@ -131,19 +145,19 @@ export default function SettingsPage() {
           <div className="p-4 sm:p-5 rounded-2xl bg-zinc-900/50 border border-zinc-850 flex flex-col gap-3">
             <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
               <Sun className="w-3.5 h-3.5" />
-              <span>{t('settings.appearance')}</span>
+              <span>{t("settings.appearance")}</span>
             </h3>
 
             <div className="grid grid-cols-3 gap-2">
               {[
-                { id: 'dark', icon: Moon },
-                { id: 'light', icon: Sun },
-                { id: 'system', icon: Monitor }
+                { id: "dark", icon: Moon },
+                { id: "light", icon: Sun },
+                { id: "system", icon: Monitor },
               ].map(({ id, icon }) => (
                 <IconButton
                   key={id}
                   icon={icon}
-                  variant={theme === id ? 'emerald' : 'default'}
+                  variant={theme === id ? "emerald" : "default"}
                   className="w-full h-10"
                   onClick={() => setTheme(id)}
                 />
@@ -155,13 +169,13 @@ export default function SettingsPage() {
           <div className="p-4 sm:p-5 rounded-2xl bg-zinc-900/50 border border-zinc-850 flex flex-col gap-3">
             <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
               <Globe className="w-3.5 h-3.5" />
-              <span>{t('settings.language')}</span>
+              <span>{t("settings.language")}</span>
             </h3>
 
             <div className="grid grid-cols-2 gap-2">
               {[
-                { id: 'zh' as LocaleKey, label: '简体中文' },
-                { id: 'en' as LocaleKey, label: 'English' }
+                { id: "zh" as LocaleKey, label: "简体中文" },
+                { id: "en" as LocaleKey, label: "English" },
               ].map(({ id, label }) => (
                 <button
                   key={id}
@@ -169,8 +183,8 @@ export default function SettingsPage() {
                   onClick={() => setLanguage(id)}
                   className={`h-10 px-4 rounded-xl text-xs font-medium border transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer ${
                     language === id
-                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                      : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-zinc-700 hover:text-zinc-200'
+                      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                      : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-zinc-700 hover:text-zinc-200"
                   }`}
                 >
                   <span>{label}</span>
@@ -186,7 +200,7 @@ export default function SettingsPage() {
           >
             <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
               <Cpu className="w-3.5 h-3.5" />
-              <span>{t('settings.aiConfig')}</span>
+              <span>{t("settings.aiConfig")}</span>
             </h3>
 
             {loading ? (
@@ -199,7 +213,7 @@ export default function SettingsPage() {
                   <label className="text-xs font-medium text-zinc-300">API Key</label>
                   <div className="relative flex items-center">
                     <input
-                      type={showApiKey ? 'text' : 'password'}
+                      type={showApiKey ? "text" : "password"}
                       value={formSettings.apiKey}
                       onChange={(e) => setFormSettings({ ...formSettings, apiKey: e.target.value })}
                       placeholder="sk-..."
@@ -211,7 +225,11 @@ export default function SettingsPage() {
                       className="absolute right-2.5 p-1 text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer"
                       tabIndex={-1}
                     >
-                      {showApiKey ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      {showApiKey ? (
+                        <EyeOff className="w-3.5 h-3.5" />
+                      ) : (
+                        <Eye className="w-3.5 h-3.5" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -259,9 +277,11 @@ export default function SettingsPage() {
                     icon={savedSuccess ? Check : Save}
                     loading={saving}
                     disabled={saving || (!isDirty && !savedSuccess)}
-                    variant={savedSuccess || isDirty ? 'primary' : 'default'}
+                    variant={savedSuccess || isDirty ? "primary" : "default"}
                     size="md"
-                    className={!isDirty && !savedSuccess && !saving ? 'opacity-40 cursor-not-allowed' : ''}
+                    className={
+                      !isDirty && !savedSuccess && !saving ? "opacity-40 cursor-not-allowed" : ""
+                    }
                   />
                 </div>
               </>
@@ -272,15 +292,10 @@ export default function SettingsPage() {
           <div className="p-4 sm:p-5 rounded-2xl bg-zinc-900/50 border border-zinc-850 flex items-center justify-between">
             <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
               <User className="w-3.5 h-3.5" />
-              <span>{t('settings.account')}</span>
+              <span>{t("settings.account")}</span>
             </h3>
 
-            <IconButton
-              icon={LogOut}
-              variant="danger"
-              size="md"
-              onClick={handleLogout}
-            />
+            <IconButton icon={LogOut} variant="danger" size="md" onClick={handleLogout} />
           </div>
         </ContentContainer>
       </div>
