@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] - 2026-10-17
+
+### ✨ Added
+
+- **Browser-Native Voice Dictation**: Integrated speech-to-text dictation via the browser-native Web Speech API (`SpeechRecognition`) directly into `SparkModal`, allowing seamless hands-free thought capture.
+- **Automated Markdown Formatting**: Added server-side Markdown formatting on note save (`POST /api/notes/raw`) using `oxfmt v0.72.0` to ensure standardized typography and whitespace.
+
+### 🔄 Changed
+
+- **Navigation Priority & Default Route**: Swapped primary navigation tab positions to prioritize Notes over Sparks, setting `/notes` as the default landing route with smooth tab transition.
+
+---
+
 ## [1.0.5] - 2026-08-30
 
 ### 🐛 Fixed
@@ -114,6 +127,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Docker & CI/CD**: Production `Dockerfile` and automated multi-arch GHCR publishing pipeline.
 - **License**: Released under standard MIT License.
 
+[1.0.6]: https://github.com/Thief-K/biu-note/compare/v1.0.5...v1.0.6
 [1.0.5]: https://github.com/Thief-K/biu-note/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/Thief-K/biu-note/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/Thief-K/biu-note/compare/v1.0.2...v1.0.3
